@@ -1,13 +1,13 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -19,6 +19,14 @@ const config = {
     },
     extend: {
       colors: {
+        "beige-500": "#98908B",
+        "beige-100": "#F8F4F0",
+
+        "grey-900": "#201F24",
+        "grey-500": "#696868",
+        "grey-300": "#B3B3B3",
+        "grey-100": "#F2F2F2",
+
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -31,6 +39,23 @@ const config = {
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
+          green: "#277C78",
+          yellow: "#F2CDAC",
+          cyan: "#82C9D7",
+          navy: "#626070",
+          red: "#C94736",
+          purple: "#826CB0",
+        },
+        other: {
+          purple: "#AF81BA",
+          turqoise: "#597C7C",
+          brown: "#93674F",
+          magenta: "#934F6F",
+          blue: "#3F82B2",
+          "navy-green": "#97A0AC",
+          "army-green": "#7F9161",
+          gold: "#CAB361",
+          orange: "#BE6C49",
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
@@ -75,6 +100,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;
