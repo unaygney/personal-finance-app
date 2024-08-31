@@ -2,7 +2,7 @@
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { LoginFormSchema, loginSchema } from "@/lib/validations";
+import { SignUpFormSchema, signUpSchema } from "@/lib/validations";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,22 +17,22 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Eye } from "@/components/ui/icons";
 
-export default function LoginForm() {
+export default function SignupForm() {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
 
   const togglePassword = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const form = useForm<LoginFormSchema>({
-    resolver: zodResolver(loginSchema),
+  const form = useForm<SignUpFormSchema>({
+    resolver: zodResolver(signUpSchema),
   });
 
   const {
     formState: { isSubmitting },
   } = form;
 
-  async function onSubmit(values: LoginFormSchema) {
+  async function onSubmit(values: SignUpFormSchema) {
     console.log(values);
   }
 
@@ -45,12 +45,25 @@ export default function LoginForm() {
         >
           <FormField
             control={form.control}
-            name="email"
+            name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="Email" {...field} />
+                  <Input placeholder="Name" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="relative">
+                <FormLabel>Email</FormLabel>
+                <FormControl className="">
+                  <Input type="email" placeholder="Email" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -78,6 +91,9 @@ export default function LoginForm() {
                     </button>
                   </div>
                 </FormControl>
+                <FormDescription>
+                  Passwords must be at least 8 characters
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -88,7 +104,7 @@ export default function LoginForm() {
             type="submit"
             loading={isSubmitting}
           >
-            Login
+            Create Account
           </Button>
         </form>
       </Form>
@@ -96,8 +112,8 @@ export default function LoginForm() {
         className="text-preset-4 text-center truncate  font-normal inline-flex gap-2 items-center text-grey-500"
         href="/sign-up"
       >
-        Need to create an account?
-        <span className="underline font-bold text-grey-900">Sign Up</span>
+        Already have an account?{" "}
+        <span className="underline font-bold text-grey-900">Login</span>
       </Link>
     </div>
   );
