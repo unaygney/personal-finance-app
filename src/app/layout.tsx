@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="w-full h-full antialiased scroll-smooth">
-      <body className={cn("w-full h-full ", publicSans.className)}>
+      <body className={cn("w-full h-full bg-beige-100 ", publicSans.className)}>
         {children}
       </body>
     </html>
