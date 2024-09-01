@@ -1,10 +1,11 @@
 "use server";
 
 import { generateAccessToken, generateRefreshToken } from "@/lib/auth";
+import { saveRefreshToken } from "@/lib/data";
 import db from "@/lib/db";
 import { loginSchema, signUpSchema } from "@/lib/validations";
 import bcrpyt from "bcrypt";
-
+import { cookies, headers } from "next/headers";
 export const login = async (email: string, password: string) => {
   try {
     // check if the inputs are correct according to the schema
@@ -29,9 +30,26 @@ export const login = async (email: string, password: string) => {
     const accessToken = await generateAccessToken(user.id);
     const refreshToken = await generateRefreshToken(user.id);
 
-    console.log("access => ", accessToken);
-    console.log("refresh => ", refreshToken);
-    // ...
+    // Save refresh token in redis
+    await saveRefreshToken(user.id, refreshToken);
+
+    // Create a session id
+    const sessionId = `session_${user.id}_${Date.now()}`;
+
+    // Set cookies
+    cookies().set("accessToken", accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 15 * 60,
+    });
+
+    cookies().set("sessionId", sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60,
+    });
 
     return { success: true, message: "User logged in successfully" };
   } catch (error) {
