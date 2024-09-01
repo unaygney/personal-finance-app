@@ -1,4 +1,5 @@
 "use client";
+
 import React from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -16,10 +17,14 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Eye } from "@/components/ui/icons";
+import { register } from "../actions";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
-
+  const { toast } = useToast();
+  const router = useRouter();
   const togglePassword = () => {
     setShowPassword((prev) => !prev);
   };
@@ -29,11 +34,36 @@ export default function SignupForm() {
   });
 
   const {
+    reset,
     formState: { isSubmitting },
   } = form;
 
   async function onSubmit(values: SignUpFormSchema) {
-    console.log(values);
+    const res = await register(values.email, values.password, values.name);
+
+    if (res.success) {
+      toast({
+        title: "Account created",
+        description: res.message,
+      });
+      reset({
+        name: "",
+        email: "",
+        password: "",
+      });
+      router.push("/login");
+    } else {
+      toast({
+        title: "Error",
+        description: res.message,
+        variant: "destructive",
+      });
+      reset({
+        name: "",
+        email: "",
+        password: "",
+      });
+    }
   }
 
   return (

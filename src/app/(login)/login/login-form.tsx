@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,9 +15,13 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { Eye } from "@/components/ui/icons";
-
+import { login } from "../actions";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 export default function LoginForm() {
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const router = useRouter();
+  const { toast } = useToast();
 
   const togglePassword = () => {
     setShowPassword((prev) => !prev);
@@ -30,10 +33,33 @@ export default function LoginForm() {
 
   const {
     formState: { isSubmitting },
+    reset,
   } = form;
 
   async function onSubmit(values: LoginFormSchema) {
-    console.log(values);
+    const res = await login(values.email, values.password);
+
+    if (res.success) {
+      toast({
+        title: "Account created",
+        description: res.message,
+      });
+      reset({
+        email: "",
+        password: "",
+      });
+      router.push("/login");
+    } else {
+      toast({
+        title: "Error",
+        description: res.message,
+        variant: "destructive",
+      });
+      reset({
+        email: "",
+        password: "",
+      });
+    }
   }
 
   return (
