@@ -1,5 +1,6 @@
 import "server-only";
 import db from "./db";
+import { redis } from "./redis";
 
 export const getUser = async (email: string) => {
   try {
@@ -17,3 +18,8 @@ export const getUser = async (email: string) => {
     throw new Error("Failed to fetch user.");
   }
 };
+export async function saveRefreshToken(userId: string, refreshToken: string) {
+  await redis.set(`refreshToken:${userId}`, refreshToken, {
+    ex: 7 * 24 * 60 * 60,
+  });
+}
