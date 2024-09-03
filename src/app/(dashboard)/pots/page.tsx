@@ -2,6 +2,8 @@ import { Button } from "@/components/ui/button";
 import { Dots } from "@/components/ui/icons";
 import { Progress } from "@/components/ui/progress";
 import React from "react";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import AddnewBudget from "@/modals/add-new-budget";
 
 const POSTS = [
   {
@@ -43,7 +45,12 @@ export default function PotsPage() {
     <div className="container flex flex-col gap-8">
       <div className="flex items-center justify-between">
         <h1 className="text-preset-1 text-grey-900">Pots</h1>
-        <Button>+Add New Budget</Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>+Add New Budget</Button>
+          </DialogTrigger>
+          <AddnewBudget />
+        </Dialog>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {POSTS.map((pot: POT, idx) => (
