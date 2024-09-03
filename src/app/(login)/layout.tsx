@@ -1,6 +1,6 @@
-import { Logo } from "@/components/ui/icons";
 import React from "react";
 import Image from "next/image";
+import { Logo } from "@/components/ui/icons";
 export default function LoginLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
