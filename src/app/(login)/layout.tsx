@@ -11,7 +11,7 @@ export default function LoginLayout({
       </div>
       <div className="relative overflow-hidden h-full hidden lg:flex lg:flex-col max-w-[560px] flex-1 bg-grey-900 p-10 rounded-[12px]">
         <Logo className="z-10" />
-        <div className="absolute inset-0 z-0 w-full h-full ">
+        <div className="absolute inset-0 z-0 w-full h-full  ">
           <Image
             src={"/image.png"}
             alt="login and signup illustration image"
