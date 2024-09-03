@@ -41,8 +41,8 @@ type NavLinkType = (typeof NAV_LINKS)[number];
 
 export default function MobileSideBar() {
   return (
-    <div className="fixed bottom-0 rounded-t-lg left-0 right-0 w-full h-11 bg-grey-900 text-grey-300 pt-2 px-4 md:px-10 md:h-[66px] lg:hidden ">
-      <div className="w-full h-full flex">
+    <div className="fixed bottom-0 left-0 right-0 z-50 h-11 w-full rounded-t-lg bg-grey-900 px-4 pt-2 text-grey-300 md:h-[66px] md:px-10 lg:hidden">
+      <div className="flex h-full w-full">
         {NAV_LINKS.map((link) => (
           <NavLink key={link.id} link={link} />
         ))}
@@ -58,20 +58,20 @@ function NavLink({ link }: { link: NavLinkType }) {
     <Link
       href={link.link}
       className={cn(
-        "flex-1 gap-1 inline-flex flex-col items-center justify-center  w-full h-full",
+        "inline-flex h-full w-full flex-1 flex-col items-center justify-center gap-1",
         {
-          "bg-white text-secondary-green border-b-4 border-secondary-green rounded-t-lg":
+          "rounded-t-lg border-b-4 border-secondary-green bg-white text-secondary-green":
             link.link === pathname,
-        }
+        },
       )}
     >
       <span>{link.icon}</span>
       <p
         className={cn(
-          "text-preset-5 text-xs text-grey-300 font-bold hidden md:block ",
+          "text-preset-5 hidden text-xs font-bold text-grey-300 md:block",
           {
             "text-grey-900": link.link === pathname,
-          }
+          },
         )}
       >
         {link.name}
