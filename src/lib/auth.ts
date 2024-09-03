@@ -2,6 +2,7 @@ import "server-only";
 import { SignJWT, jwtVerify } from "jose";
 import { getEnv } from "./utils";
 import { redis } from "./redis";
+import { cookies } from "next/headers";
 
 const JWT_SECRET = getEnv("JWT_SECRET");
 const JWT_REFRESH_SECRET = getEnv("JWT_REFRESH_SECRET");
@@ -19,6 +20,16 @@ export const generateAccessToken = async (userId: string) => {
 
   return jwt;
 };
+export const decrypt = async () => {
+  const token = (cookies().get("accessToken")?.value as string) ?? null;
+  const secret = new TextEncoder().encode(JWT_SECRET);
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    return payload.userId;
+  } catch (e) {
+    console.log(e);
+  }
+};
 export const generateRefreshToken = async (userId: string) => {
   const secret = new TextEncoder().encode(JWT_REFRESH_SECRET);
 
@@ -34,11 +45,10 @@ export const accessTokenRefresh = async (sessionId: string) => {
   try {
     const refreshToken = await redis.get(`refreshToken:${sessionId}`);
     if (!refreshToken) {
-      throw new Error("Refresh token not found or expired");
-    }
-
-    if (!JWT_REFRESH_SECRET) {
-      throw new Error("JWT_REFRESH_SECRET is not defined or empty");
+      return {
+        success: false,
+        message: "Token verification failed.Token expired!",
+      };
     }
 
     const secretKey = new TextEncoder().encode(JWT_REFRESH_SECRET);
