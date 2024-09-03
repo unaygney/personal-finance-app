@@ -20,15 +20,15 @@ enum Theme {
   NAVY
   RED
   PURPLE
-  turquoise
-  brown
-  magenta
-  blue
-  grey
-  army
-  pink
-  yellowgreen
-  orange
+  TURQUOISE
+  BROWN
+  MAGENTA
+  BLUE
+  GREY
+  ARMY
+  PINK
+  YELLOWGREEN
+  ORANGE
 }
 
 model User {
