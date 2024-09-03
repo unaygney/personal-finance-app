@@ -1,11 +1,11 @@
 "use server";
 
 import { generateAccessToken, generateRefreshToken } from "@/lib/auth";
-import { saveRefreshToken } from "@/lib/data";
+import { saveRefreshToken, saveUserInRedis } from "@/lib/data";
 import db from "@/lib/db";
 import { loginSchema, signUpSchema } from "@/lib/validations";
 import bcrpyt from "bcrypt";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 export const login = async (email: string, password: string) => {
   try {
     // check if the inputs are correct according to the schema
@@ -35,6 +35,13 @@ export const login = async (email: string, password: string) => {
 
     // Create a session id
     const sessionId = `session_${user.id}_${Date.now()}`;
+
+    // set user's info in redis
+    await saveUserInRedis({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    });
 
     // Set cookies
     cookies().set("accessToken", accessToken, {
