@@ -13,9 +13,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Theme {
+  GREEN
+  YELLOW
+  CYAN
+  NAVY
+  RED
+  PURPLE
+  turquoise
+  brown
+  magenta
+  blue
+  grey
+  army
+  pink
+  yellowgreen
+  orange
+}
+
 model User {
-  id       String @id @default(uuid())
+  id       String @id @unique @default(uuid())
   email    String @unique
   name     String
   password String
+  pots     Pot[]
+
+  @@index([email, id])
+}
+
+model Pot {
+  id     Int    @id @default(autoincrement())
+  name   String
+  target Float
+  total  Float
+  theme  Theme
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 }
