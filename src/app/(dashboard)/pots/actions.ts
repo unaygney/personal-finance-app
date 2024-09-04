@@ -131,3 +131,105 @@ export const updatePot = async (id: number, values: AddNewPotsFormSchema) => {
     return { success: false, message: "Failed to update pot" };
   }
 };
+export const withdrawMoney = async (potId: number, amount: number) => {
+  const userId = await decrypt();
+  if (!userId || typeof userId !== "string") {
+    return { success: false, message: "Invalid token" };
+  }
+
+  try {
+    const pot = await db.pot.findFirst({
+      where: {
+        id: potId,
+        userId,
+      },
+    });
+
+    if (!pot) {
+      return { success: false, message: "Pot not found" };
+    }
+
+    if (pot.total < amount) {
+      return { success: false, message: "Insufficient funds" };
+    }
+
+    await db.pot.update({
+      where: { id: potId },
+      data: {
+        total: {
+          decrement: amount,
+        },
+      },
+    });
+
+    revalidatePath("/pots");
+    return { success: true, message: "Money withdrawn successfully" };
+  } catch (error) {
+    console.error("Error withdrawing money:", error);
+    return { success: false, message: "Error withdrawing money" };
+  }
+};
+export const addMoney = async (potId: number, amount: number) => {
+  const userId = await decrypt();
+  if (!userId || typeof userId !== "string") {
+    return { success: false, message: "Invalid token" };
+  }
+
+  try {
+    const pot = await db.pot.findFirst({
+      where: {
+        id: potId,
+        userId,
+      },
+    });
+
+    if (!pot) {
+      return { success: false, message: "Pot not found" };
+    }
+    if (pot.total + amount > pot.target) {
+      return {
+        success: false,
+        message: `Amount exceeds the target of ${pot.target}`,
+      };
+    }
+
+    await db.pot.update({
+      where: { id: potId },
+      data: {
+        total: {
+          increment: amount,
+        },
+      },
+    });
+
+    revalidatePath("/pots");
+
+    return { success: true, message: "Money added successfully" };
+  } catch (error) {
+    console.error("Error adding money:", error);
+    return { success: false, message: "Error adding money" };
+  }
+};
+export const getPot = async (id: number) => {
+  const userId = await decrypt();
+  if (!userId || typeof userId !== "string") {
+    return { success: false, message: "Invalid token" };
+  }
+
+  try {
+    const pot = await db.pot.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!pot) {
+      return { success: false, message: "Pot not found" };
+    }
+
+    return { success: true, message: "pot found", data: pot };
+  } catch (error) {
+    console.error("Error getting pot:", error);
+    return { success: false, message: "Error getting pot" };
+  }
+};
