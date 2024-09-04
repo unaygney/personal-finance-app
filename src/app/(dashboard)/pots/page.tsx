@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/popover";
 import DeletePotModal from "@/modals/delete-pot";
 import UpdatePotModal from "@/modals/update-pot-modal";
+import AddMoneyModal from "@/modals/add-money-modal";
+import WithdrawMoney from "@/modals/withdraw-money";
 
 export default async function PotsPage() {
   const POTS = await db.pot.findMany({
@@ -92,28 +94,42 @@ function PotCard({ pot }: { pot: Pot }) {
       <div className="flex h-[114px] flex-col justify-center gap-4">
         <div className="flex items-center justify-between">
           <h4 className="text-preset-4 text-grey-500">Total Saved</h4>
-          <p className="text-preset-1">${pot.target.toFixed(2)}</p>
+          <p className="text-preset-1">${pot.total.toFixed(2)}</p>
         </div>
         <div className="flex flex-col gap-3">
           <Progress
             className="h-2"
-            value={(pot.total / pot.target) * 100}
-            indicatorColor={pot.theme}
+            maxValue={pot.target}
+            value={pot.total}
+            indicatorColor={getColorHexCode(pot.theme)}
           />
           <div className="flex justify-between">
-            <p className="text-preset-5 text-grey-500">Target</p>
-            <p className="text-preset-5 text-grey-500">Total</p>
+            <p className="text-preset-5 text-grey-500">
+              {((pot.total / pot.target) * 100).toFixed(2)}%
+            </p>
+            <p className="text-preset-5 text-grey-500">{`Target of $${pot.target.toLocaleString()}`}</p>
           </div>
         </div>
       </div>
       {/* Actions */}
       <div className="mb-[14px] flex gap-4">
-        <Button variant="secondary" className="flex-1">
-          + Add Money
-        </Button>
-        <Button variant="secondary" className="flex-1">
-          Withdraw
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="secondary" className="flex-1">
+              + Add Money
+            </Button>
+          </DialogTrigger>
+          <AddMoneyModal pot={pot} />
+        </Dialog>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="secondary" className="flex-1">
+              Withdraw
+            </Button>
+          </DialogTrigger>
+          <WithdrawMoney pot={pot} />
+        </Dialog>
       </div>
     </div>
   );

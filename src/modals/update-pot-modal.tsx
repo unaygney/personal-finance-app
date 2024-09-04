@@ -32,19 +32,36 @@ import {
 } from "@/components/ui/select";
 import { getColorHexCode } from "@/lib/utils";
 import { POSTS } from "@/app/(dashboard)/pots/constants";
-import { updatePot } from "@/app/(dashboard)/pots/actions";
+import { getPot, updatePot } from "@/app/(dashboard)/pots/actions";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "react-query";
 
 export default function UpdatePotModal({ id }: { id: number }) {
   const { toast } = useToast();
+
   const form = useForm<AddNewPotsFormSchema>({
     resolver: zodResolver(addNewPotsSchema),
+    defaultValues: {
+      potName: "",
+      target: 0,
+    },
   });
 
   const {
     reset,
+    setValue,
     formState: { isSubmitting },
   } = form;
+
+  const { data } = useQuery(["pot", id], async () => getPot(id), {
+    onSuccess: (response) => {
+      if (response.success && response.data) {
+        setValue("potName", response.data.name);
+        setValue("target", response.data.target);
+        setValue("theme", response.data.theme);
+      }
+    },
+  });
 
   async function onSubmit(values: AddNewPotsFormSchema) {
     const res = await updatePot(id, values);
