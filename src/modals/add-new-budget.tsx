@@ -26,96 +26,55 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { AddNewPotsFormSchema, addNewPotsSchema } from "@/lib/validations";
+import { addPot, getThemes } from "@/app/(dashboard)/pots/actions";
+import { toast } from "@/hooks/use-toast";
+import { useQuery } from "react-query";
+import { getColorHexCode } from "@/lib/utils";
 
-const POSTS = [
-  {
-    name: "Green",
-    value: "GREEN",
-    theme: "#277C78",
-  },
-  {
-    name: "Grey",
-    value: "GREY",
-    theme: "#626070",
-  },
-  {
-    name: "Cyan",
-    value: "CYAN",
-    theme: "#82C9D7",
-  },
-  {
-    name: "Orange",
-    value: "ORANGE",
-    theme: "#F2CDAC",
-  },
-  {
-    name: "Purple",
-    value: "PURPLE",
-    theme: "#826CB0",
-  },
-  {
-    name: "Red",
-    value: "RED",
-    theme: "#FF0000",
-  },
-  {
-    name: "Yellow",
-    value: "YELLOW",
-    theme: "#FFFF00",
-  },
-  {
-    name: "Navy",
-    value: "NAVY",
-    theme: "#000080",
-  },
-  {
-    name: "Turquoise",
-    value: "TURQUOISE",
-    theme: "#40E0D0",
-  },
-  {
-    name: "Brown",
-    value: "BROWN",
-    theme: "#A52A2A",
-  },
-  {
-    name: "Magenta",
-    value: "MAGENTA",
-    theme: "#FF00FF",
-  },
-  {
-    name: "Blue",
-    value: "BLUE",
-    theme: "#0000FF",
-  },
-  {
-    name: "Army",
-    value: "ARMY",
-    theme: "#4B5320",
-  },
-  {
-    name: "Pink",
-    value: "PINK",
-    theme: "#FFC0CB",
-  },
-  {
-    name: "Yellowgreen",
-    value: "YELLOWGREEN",
-    theme: "#9ACD32",
-  },
-] as const;
+type PostType = {
+  name: string;
+  value: string;
+  isUsed: boolean;
+};
 
 export default function AddnewBudget() {
   const form = useForm<AddNewPotsFormSchema>({
     resolver: zodResolver(addNewPotsSchema),
   });
 
+  const { data: POST_RESPONSE, isLoading } = useQuery("posts", async () =>
+    getThemes(),
+  );
+
+  const POSTS: PostType[] = POST_RESPONSE?.success ? POST_RESPONSE.data : [];
+
   const {
+    reset,
     formState: { isSubmitting },
   } = form;
 
-  function onSubmit(values: AddNewPotsFormSchema) {
-    console.log(values);
+  async function onSubmit(values: AddNewPotsFormSchema) {
+    const res = await addPot({
+      name: values.potName,
+      target: values.target,
+      theme: values.theme,
+    });
+    if (res.success) {
+      toast({
+        title: "Success",
+        description: res.message,
+      });
+      reset({ potName: "", target: 0, theme: "GREEN" });
+      window.location.reload();
+    }
+
+    if (!res.success) {
+      toast({
+        title: "Error",
+        description: res.message,
+        variant: "destructive",
+      });
+    }
   }
 
   return (
@@ -180,20 +139,51 @@ export default function AddnewBudget() {
                             value={field.value}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Select a theme" />
+                              <SelectValue
+                                placeholder={
+                                  isLoading
+                                    ? "Loading themes..."
+                                    : "Select a theme"
+                                }
+                              />
                             </SelectTrigger>
                             <SelectContent>
-                              {POSTS.map((post) => (
-                                <SelectItem key={post.name} value={post.value}>
-                                  <div className="flex items-center">
-                                    <span
-                                      className="mr-2 h-4 w-4 rounded-full"
-                                      style={{ backgroundColor: post.theme }}
-                                    />
-                                    <p className="">{post.name}</p>
-                                  </div>
+                              {isLoading ? (
+                                <SelectItem value="loading" disabled>
+                                  Loading themes...
                                 </SelectItem>
-                              ))}
+                              ) : POSTS.length > 0 ? (
+                                POSTS.map((post: PostType) => (
+                                  <SelectItem
+                                    key={post.name}
+                                    value={post.value}
+                                    disabled={post.isUsed}
+                                  >
+                                    <div className="flex w-full items-center justify-between">
+                                      <div className="flex items-center">
+                                        <span
+                                          className="mr-2 h-4 w-4 rounded-full"
+                                          style={{
+                                            backgroundColor: getColorHexCode(
+                                              post.value,
+                                            ),
+                                          }}
+                                        />
+                                        <p className="">{post.name}</p>
+                                      </div>
+                                      {post.isUsed && (
+                                        <p className="text-preset-5 ml-4 text-right text-grey-500">
+                                          (Already used)
+                                        </p>
+                                      )}
+                                    </div>
+                                  </SelectItem>
+                                ))
+                              ) : (
+                                <SelectItem value="" disabled>
+                                  No themes available
+                                </SelectItem>
+                              )}
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -206,6 +196,7 @@ export default function AddnewBudget() {
                     className="w-full"
                     type="submit"
                     disabled={isSubmitting}
+                    loading={isSubmitting}
                   >
                     Submit
                   </Button>

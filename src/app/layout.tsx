@@ -3,6 +3,7 @@ import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toaster";
+import Providers from "@/components/providers";
 
 const publicSans = Public_Sans({ subsets: ["latin"] });
 
@@ -17,9 +18,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="w-full h-full antialiased scroll-smooth">
-      <body className={cn("w-full h-full bg-beige-100 ", publicSans.className)}>
-        {children}
+    <html lang="en" className="h-full w-full scroll-smooth antialiased">
+      <body className={cn("h-full w-full bg-beige-100", publicSans.className)}>
+        <Providers>{children}</Providers>
         <Toaster />
       </body>
     </html>

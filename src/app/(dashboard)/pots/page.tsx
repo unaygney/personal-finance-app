@@ -4,43 +4,15 @@ import { Progress } from "@/components/ui/progress";
 import React from "react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import AddnewBudget from "@/modals/add-new-budget";
+import { Pot } from "@prisma/client";
+import db from "@/lib/db";
+import { getColorHexCode } from "@/lib/utils";
 
-const POSTS = [
-  {
-    name: "Savings",
-    target: 2000.0,
-    total: 159.0,
-    theme: "#277C78",
-  },
-  {
-    name: "Concert Ticket",
-    target: 150.0,
-    total: 110.0,
-    theme: "#626070",
-  },
-  {
-    name: "Gift",
-    target: 150.0,
-    total: 110.0,
-    theme: "#82C9D7",
-  },
-  {
-    name: "New Laptop",
-    target: 1000.0,
-    total: 10.0,
-    theme: "#F2CDAC",
-  },
-  {
-    name: "Holiday",
-    target: 1440.0,
-    total: 531.0,
-    theme: "#826CB0",
-  },
-] as const;
+export default async function PotsPage() {
+  const POTS = await db.pot.findMany({
+    where: { userId: "cad5da4a-7dae-4c5c-9b2b-d71f5f8a95a2" },
+  });
 
-type POT = (typeof POSTS)[number];
-
-export default function PotsPage() {
   return (
     <div className="container flex flex-col gap-8">
       <div className="flex items-center justify-between">
@@ -53,7 +25,7 @@ export default function PotsPage() {
         </Dialog>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {POSTS.map((pot: POT, idx) => (
+        {POTS.map((pot: Pot, idx) => (
           <PotCard pot={pot} key={idx} />
         ))}
       </div>
@@ -61,7 +33,7 @@ export default function PotsPage() {
   );
 }
 
-function PotCard({ pot }: { pot: POT }) {
+function PotCard({ pot }: { pot: Pot }) {
   return (
     <div className="flex flex-col gap-8 rounded-[12px] bg-white px-5 py-6">
       {/* Header */}
@@ -69,7 +41,7 @@ function PotCard({ pot }: { pot: POT }) {
         <div className="flex items-center">
           <span
             className="mr-4 h-4 w-4 rounded-full"
-            style={{ backgroundColor: pot.theme }}
+            style={{ backgroundColor: getColorHexCode(pot.theme) }}
           />
           <h3 className="text-preset-2 text-grey-900">{pot.name}</h3>
         </div>
