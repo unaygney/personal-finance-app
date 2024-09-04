@@ -10,7 +10,10 @@ export const signUpSchema = z.object({
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 export const addNewPotsSchema = z.object({
-  potName: z.string().min(3, "Pot name must be at least 3 characters"),
+  potName: z
+    .string()
+    .min(3, "Pot name must be at least 3 characters")
+    .max(30, "Pot name must be at most 30 characters"),
   target: z.number().min(1, "Target must be at least 1"),
   theme: z.enum(
     [

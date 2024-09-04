@@ -58,7 +58,10 @@ export const accessTokenRefresh = async (sessionId: string) => {
     const userId = payload.userId as string;
 
     const newAccessToken = await generateAccessToken(userId);
-
+    console.log(
+      "access token generated via refresh token which is get from redis",
+      newAccessToken,
+    );
     return { success: true, accessToken: newAccessToken };
   } catch (error) {
     console.error("Token verification error:", error);
