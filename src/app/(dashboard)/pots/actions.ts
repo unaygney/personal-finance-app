@@ -2,7 +2,7 @@
 
 import { decrypt } from "@/lib/auth";
 import db from "@/lib/db";
-import { addNewPotsSchema } from "@/lib/validations";
+import { AddNewPotsFormSchema, addNewPotsSchema } from "@/lib/validations";
 import { Theme } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { POSTS } from "./constants";
@@ -82,4 +82,52 @@ export const getThemes = async () => {
   }));
 
   return { success: true, data: themesWithUsage };
+};
+export const deletePot = async (potId: number) => {
+  const userId = await decrypt();
+
+  if (!userId || typeof userId !== "string") {
+    return { success: false, message: "Invalid token" };
+  }
+
+  try {
+    await db.pot.delete({
+      where: {
+        id: potId,
+      },
+    });
+    revalidatePath("/pots");
+    return { success: true, message: "Pot deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting pot:", error);
+    return { success: false, message: "Error deleting pot" };
+  }
+};
+export const updatePot = async (id: number, values: AddNewPotsFormSchema) => {
+  const userId = await decrypt();
+
+  if (!userId || typeof userId !== "string") {
+    return { success: false, message: "Invalid token" };
+  }
+
+  try {
+    const updatedPot = await db.pot.update({
+      where: { id },
+      data: {
+        name: values.potName,
+        target: values.target,
+        theme: values.theme,
+      },
+    });
+
+    revalidatePath("/pots");
+    return {
+      success: true,
+      message: "Pot updated successfully",
+      data: updatedPot,
+    };
+  } catch (error) {
+    console.error("Error updating pot:", error);
+    return { success: false, message: "Failed to update pot" };
+  }
 };

@@ -7,6 +7,13 @@ import AddnewBudget from "@/modals/add-new-budget";
 import { Pot } from "@prisma/client";
 import db from "@/lib/db";
 import { getColorHexCode } from "@/lib/utils";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import DeletePotModal from "@/modals/delete-pot";
+import UpdatePotModal from "@/modals/update-pot-modal";
 
 export default async function PotsPage() {
   const POTS = await db.pot.findMany({
@@ -45,9 +52,41 @@ function PotCard({ pot }: { pot: Pot }) {
           />
           <h3 className="text-preset-2 text-grey-900">{pot.name}</h3>
         </div>
-        <button>
-          <Dots />
-        </button>
+
+        <Popover>
+          <PopoverTrigger>
+            <Dots />
+          </PopoverTrigger>
+          <PopoverContent asChild>
+            <div className="flex w-[114px] flex-col gap-1 px-5 py-3">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="border-none bg-transparent"
+                  >
+                    Edit Pot
+                  </Button>
+                </DialogTrigger>
+                <UpdatePotModal id={pot.id} />
+              </Dialog>
+              <hr />
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="border-none bg-transparent text-secondary-red"
+                  >
+                    Delete Pot
+                  </Button>
+                </DialogTrigger>
+                <DeletePotModal potId={pot.id} />
+              </Dialog>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
       {/* Totals Area */}
       <div className="flex h-[114px] flex-col justify-center gap-4">

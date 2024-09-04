@@ -1,9 +1,13 @@
 "use client";
+import React from "react";
 import {
+  Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +20,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { AddNewPotsFormSchema, addNewPotsSchema } from "@/lib/validations";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -23,30 +30,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { AddNewPotsFormSchema, addNewPotsSchema } from "@/lib/validations";
-import { addPot, getThemes } from "@/app/(dashboard)/pots/actions";
-import { toast } from "@/hooks/use-toast";
-import { useQuery } from "react-query";
 import { getColorHexCode } from "@/lib/utils";
+import { POSTS } from "@/app/(dashboard)/pots/constants";
+import { updatePot } from "@/app/(dashboard)/pots/actions";
+import { useToast } from "@/hooks/use-toast";
 
-type PostType = {
-  name: string;
-  value: string;
-  isUsed: boolean;
-};
-
-export default function AddnewBudget() {
+export default function UpdatePotModal({ id }: { id: number }) {
+  const { toast } = useToast();
   const form = useForm<AddNewPotsFormSchema>({
     resolver: zodResolver(addNewPotsSchema),
   });
-
-  const { data: POST_RESPONSE, isLoading } = useQuery("posts", async () =>
-    getThemes(),
-  );
-
-  const POSTS: PostType[] = POST_RESPONSE?.success ? POST_RESPONSE.data : [];
 
   const {
     reset,
@@ -54,38 +47,25 @@ export default function AddnewBudget() {
   } = form;
 
   async function onSubmit(values: AddNewPotsFormSchema) {
-    const res = await addPot({
-      name: values.potName,
-      target: values.target,
-      theme: values.theme,
-    });
+    const res = await updatePot(id, values);
+
     if (res.success) {
       toast({
-        title: "Success",
-        description: res.message,
+        title: "Updated",
+        description: "Pot updated successfully",
       });
-      reset({ potName: "", target: 0, theme: "GREEN" });
       window.location.reload();
-    }
-
-    if (!res.success) {
-      toast({
-        title: "Error",
-        description: res.message,
-        variant: "destructive",
-      });
     }
   }
 
   return (
     <DialogContent className="w-full">
       <DialogHeader className="w-full">
-        <DialogTitle>Add New Pot</DialogTitle>
+        <DialogTitle>Edit Pot</DialogTitle>
         <DialogDescription asChild>
           <div className="flex w-full flex-col">
             <p className="my-5">
-              Choose a category to set a spending budget. These categories can
-              help you monitor spending.
+              If your saving targets change, feel free to update your pots.
             </p>
             <div className="flex w-full">
               <Form {...form}>
@@ -150,51 +130,35 @@ export default function AddnewBudget() {
                             value={field.value}
                           >
                             <SelectTrigger>
-                              <SelectValue
-                                placeholder={
-                                  isLoading
-                                    ? "Loading themes..."
-                                    : "Select a theme"
-                                }
-                              />
+                              <SelectValue placeholder="Select a theme" />
                             </SelectTrigger>
                             <SelectContent>
-                              {isLoading ? (
-                                <SelectItem value="loading" disabled>
-                                  Loading themes...
-                                </SelectItem>
-                              ) : POSTS.length > 0 ? (
-                                POSTS.map((post: PostType) => (
-                                  <SelectItem
-                                    key={post.name}
-                                    value={post.value}
-                                    disabled={post.isUsed}
-                                  >
-                                    <div className="flex w-full items-center justify-between">
-                                      <div className="flex items-center">
-                                        <span
-                                          className="mr-2 h-4 w-4 rounded-full"
-                                          style={{
-                                            backgroundColor: getColorHexCode(
-                                              post.value,
-                                            ),
-                                          }}
-                                        />
-                                        <p className="">{post.name}</p>
-                                      </div>
-                                      {post.isUsed && (
-                                        <p className="text-preset-5 ml-4 text-right text-grey-500">
-                                          (Already used)
-                                        </p>
-                                      )}
+                              {POSTS.map((post: any) => (
+                                <SelectItem
+                                  key={post.name}
+                                  value={post.value}
+                                  disabled={post.isUsed}
+                                >
+                                  <div className="flex w-full items-center justify-between">
+                                    <div className="flex items-center">
+                                      <span
+                                        className="mr-2 h-4 w-4 rounded-full"
+                                        style={{
+                                          backgroundColor: getColorHexCode(
+                                            post.value,
+                                          ),
+                                        }}
+                                      />
+                                      <p>{post.name}</p>
                                     </div>
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <SelectItem value="" disabled>
-                                  No themes available
+                                    {post.isUsed && (
+                                      <p className="text-preset-5 ml-4 text-right text-grey-500">
+                                        (Already used)
+                                      </p>
+                                    )}
+                                  </div>
                                 </SelectItem>
-                              )}
+                              ))}
                             </SelectContent>
                           </Select>
                         </FormControl>
@@ -207,9 +171,8 @@ export default function AddnewBudget() {
                     className="w-full"
                     type="submit"
                     disabled={isSubmitting}
-                    loading={isSubmitting}
                   >
-                    Submit
+                    {isSubmitting ? "Submitting..." : "Submit"}
                   </Button>
                 </form>
               </Form>
