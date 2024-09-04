@@ -1,0 +1,17 @@
+export const POSTS = [
+  { name: "Green", value: "GREEN", theme: "#277C78" },
+  { name: "Grey", value: "GREY", theme: "#626070" },
+  { name: "Cyan", value: "CYAN", theme: "#82C9D7" },
+  { name: "Orange", value: "ORANGE", theme: "#F2CDAC" },
+  { name: "Purple", value: "PURPLE", theme: "#826CB0" },
+  { name: "Red", value: "RED", theme: "#FF0000" },
+  { name: "Yellow", value: "YELLOW", theme: "#FFFF00" },
+  { name: "Navy", value: "NAVY", theme: "#000080" },
+  { name: "Turquoise", value: "TURQUOISE", theme: "#40E0D0" },
+  { name: "Brown", value: "BROWN", theme: "#A52A2A" },
+  { name: "Magenta", value: "MAGENTA", theme: "#FF00FF" },
+  { name: "Blue", value: "BLUE", theme: "#0000FF" },
+  { name: "Army", value: "ARMY", theme: "#4B5320" },
+  { name: "Pink", value: "PINK", theme: "#FFC0CB" },
+  { name: "Yellowgreen", value: "YELLOWGREEN", theme: "#9ACD32" },
+] as const;
