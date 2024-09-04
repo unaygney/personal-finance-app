@@ -38,7 +38,23 @@ export const addNewPotsSchema = z.object({
     },
   ),
 });
+export const addMoneySchema = (maxAmount: number) =>
+  z.object({
+    amount: z
+      .number()
+      .min(1, "Amount must be at least 1")
+      .max(maxAmount, `Amount cannot exceed ${maxAmount}`),
+  });
+export const withdrawSchema = (maxAmount: number) =>
+  z.object({
+    amount: z
+      .number()
+      .min(1, "Amount must be at least 1")
+      .max(maxAmount, `Amount cannot exceed ${maxAmount}`),
+  });
 
+export type WithdrawFormSchema = { amount: number };
+export type AddMoneyFormSchema = { amount: number };
 export type SignUpFormSchema = z.infer<typeof signUpSchema>;
 export type LoginFormSchema = z.infer<typeof loginSchema>;
 export type AddNewPotsFormSchema = z.infer<typeof addNewPotsSchema>;
