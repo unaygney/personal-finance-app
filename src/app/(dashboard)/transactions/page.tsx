@@ -1,6 +1,12 @@
 import React from "react";
 import { Transactions, columns } from "./columns";
-import { DataTable } from "./data-table";
+import dynamic from "next/dynamic";
+import { ColumnDef } from "@tanstack/react-table";
+
+const DataTable = dynamic<{
+  columns: ColumnDef<Transactions>[];
+  data: Transactions[];
+}>(() => import("./data-table").then((mod) => mod.DataTable), { ssr: false });
 
 export default async function TransactionsPage() {
   const data: Transactions[] = [
