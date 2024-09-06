@@ -52,6 +52,7 @@ model User {
   pots         Pot[]
   transactions Transaction[]
   balance      Balance?
+  budget       Budget[]
 
   @@index([email, id])
 }
@@ -84,6 +85,16 @@ model Transaction {
   date      String
   recurring Boolean
   userId    String
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Budget {
+  id       Int      @id @default(autoincrement())
+  amount   Float
+  category Category
+  theme    Theme
+  userId   String
 
   user User @relation(fields: [userId], references: [id])
 }
