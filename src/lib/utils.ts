@@ -49,3 +49,15 @@ export const getColorHexCode = (theme: string): string => {
       return "#000000";
   }
 };
+export const logoMapping: Record<string, string> = {
+  Entertainment: "/images/Logo-5.jpg",
+  Bills: "/images/Logo-3.jpg",
+  Groceries: "/images/Logo-1.jpg",
+  "Dining Out": "/images/Logo-2.jpg",
+  Transportation: "/images/Logo-4.jpg",
+  "Personal Care": "/images/Logo-2.jpg",
+  Education: "/images/Logo-3.jpg",
+  Lifestyle: "/images/Logo-5.jpg",
+  Shopping: "/images/Logo-6.jpg",
+  General: "/images/Logo-8.jpg",
+};

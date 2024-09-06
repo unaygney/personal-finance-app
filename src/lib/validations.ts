@@ -53,6 +53,47 @@ export const withdrawSchema = (maxAmount: number) =>
       .max(maxAmount, `Amount cannot exceed ${maxAmount}`),
   });
 
+/*
+  {
+    avatar: "/images/Person-1.jpg",
+    name: "Emma Richardson",
+    category: "General",
+    date: "2024-10-19T14:23:11Z",
+    amount: 75.5,
+    recurring: true,
+  },
+
+  */
+
+export const Categories = [
+  "Entertainment",
+  "Bills",
+  "Groceries",
+  "DiningOut",
+  "Transportation",
+  "PersonalCare",
+  "Education",
+  "Lifestyle",
+  "Shopping",
+  "General",
+] as const;
+
+export const addNewTransactionSchema = z.object({
+  name: z
+    .string()
+    .min(3, "Name must be at least 3 characters")
+    .max(30, "Name must be at most 30 characters"),
+  category: z.enum([...Categories]),
+  amount: z.number().refine((value) => value !== 0, {
+    message: "Amount must not be zero",
+  }),
+  recurring: z.boolean().optional(),
+  avatar: z.string().optional(),
+  date: z.string(),
+});
+export type AddNewTransactionFormSchema = z.infer<
+  typeof addNewTransactionSchema
+>;
 export type WithdrawFormSchema = { amount: number };
 export type AddMoneyFormSchema = { amount: number };
 export type SignUpFormSchema = z.infer<typeof signUpSchema>;
