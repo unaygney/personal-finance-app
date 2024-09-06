@@ -4,17 +4,9 @@ import { CheckCircle, WarningCircle } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
+import { Transaction } from "@prisma/client";
 
-export type Transactions = {
-  avatar: string;
-  name: string;
-  category: string;
-  date: string;
-  amount: number;
-  recurring: boolean;
-};
-
-export const columns: ColumnDef<Transactions>[] = [
+export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "name",
     header: () => (

@@ -3,17 +3,9 @@
 import { cn } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
+import { Transaction } from "@prisma/client";
 
-export type Transactions = {
-  avatar: string;
-  name: string;
-  category: string;
-  date: string;
-  amount: number;
-  recurring: boolean;
-};
-
-export const columns: ColumnDef<Transactions>[] = [
+export const columns: ColumnDef<Transaction>[] = [
   {
     accessorKey: "name",
     header: () => (
@@ -34,7 +26,9 @@ export const columns: ColumnDef<Transactions>[] = [
             className="rounded-full"
             unoptimized
           />
-          <p className="text-preset-4 ml-2 font-bold text-grey-900">{name}</p>
+          <p className="text-preset-4 ml-2 font-bold capitalize text-grey-900">
+            {name}
+          </p>
         </div>
       );
     },
