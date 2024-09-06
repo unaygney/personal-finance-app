@@ -16,7 +16,6 @@ export const addPot = async ({
   target: number;
   theme: string;
 }) => {
-  console.log(typeof name, typeof target, typeof theme);
   // check if the token is valid
   const userId = await decrypt();
   if (!userId || typeof userId !== "string") {

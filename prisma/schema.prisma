@@ -31,14 +31,38 @@ enum Theme {
   ORANGE
 }
 
+enum Category {
+  Entertainment
+  Bills
+  Groceries
+  DiningOut
+  Transportation
+  PersonalCare
+  Education
+  Lifestyle
+  Shopping
+  General
+}
+
 model User {
-  id       String @id @unique @default(uuid())
-  email    String @unique
-  name     String
-  password String
-  pots     Pot[]
+  id           String        @id @unique @default(uuid())
+  email        String        @unique
+  name         String
+  password     String
+  pots         Pot[]
+  transactions Transaction[]
+  balance      Balance?
 
   @@index([email, id])
+}
+
+model Balance {
+  id       Int    @id @default(autoincrement())
+  current  Float  @default(0.0)
+  income   Float  @default(0.0)
+  expenses Float  @default(0.0)
+  userId   String @unique
+  user     User   @relation(fields: [userId], references: [id])
 }
 
 model Pot {
@@ -49,4 +73,17 @@ model Pot {
   theme  Theme
   userId String
   user   User   @relation(fields: [userId], references: [id])
+}
+
+model Transaction {
+  id        Int      @id @default(autoincrement())
+  avatar    String
+  name      String
+  amount    Float
+  Category  Category
+  date      String
+  recurring Boolean
+  userId    String
+
+  user User @relation(fields: [userId], references: [id])
 }

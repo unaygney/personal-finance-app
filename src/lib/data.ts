@@ -43,3 +43,33 @@ export async function getUserFromRedis(userId: string) {
   }
   return user;
 }
+export const updateBalance = async (userId: string, amount: number) => {
+  const currentBalance = await db.balance.findUnique({
+    where: { userId },
+  });
+
+  if (!currentBalance) {
+    const newBalance = {
+      current: amount,
+      income: amount > 0 ? amount : 0,
+      expenses: amount < 0 ? Math.abs(amount) : 0,
+    };
+    await db.balance.create({
+      data: { userId, ...newBalance },
+    });
+  } else {
+    const updatedBalance = {
+      current: currentBalance.current + amount,
+      income:
+        amount > 0 ? currentBalance.income + amount : currentBalance.income,
+      expenses:
+        amount < 0
+          ? currentBalance.expenses + Math.abs(amount)
+          : currentBalance.expenses,
+    };
+    await db.balance.update({
+      where: { userId },
+      data: updatedBalance,
+    });
+  }
+};
