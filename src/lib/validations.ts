@@ -53,18 +53,6 @@ export const withdrawSchema = (maxAmount: number) =>
       .max(maxAmount, `Amount cannot exceed ${maxAmount}`),
   });
 
-/*
-  {
-    avatar: "/images/Person-1.jpg",
-    name: "Emma Richardson",
-    category: "General",
-    date: "2024-10-19T14:23:11Z",
-    amount: 75.5,
-    recurring: true,
-  },
-
-  */
-
 export const Categories = [
   "Entertainment",
   "Bills",
@@ -91,6 +79,34 @@ export const addNewTransactionSchema = z.object({
   avatar: z.string().optional(),
   date: z.string(),
 });
+export const addNewBudgetSchema = z.object({
+  categories: z.enum([...Categories]),
+  maximumSpend: z.number().min(1, "Amount must be at least 1"),
+  theme: z.enum(
+    [
+      "GREEN",
+      "YELLOW",
+      "CYAN",
+      "NAVY",
+      "RED",
+      "PURPLE",
+      "TURQUOISE",
+      "BROWN",
+      "MAGENTA",
+      "BLUE",
+      "GREY",
+      "ARMY",
+      "PINK",
+      "YELLOWGREEN",
+      "ORANGE",
+    ],
+    {
+      required_error: "You must select a theme",
+    },
+  ),
+});
+
+export type AddNewBudgetSchema = z.infer<typeof addNewBudgetSchema>;
 export type AddNewTransactionFormSchema = z.infer<
   typeof addNewTransactionSchema
 >;
