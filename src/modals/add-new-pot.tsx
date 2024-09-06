@@ -25,17 +25,11 @@ import {
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
-import { getThemes } from "@/app/(dashboard)/pots/actions";
+import { AddNewPotsFormSchema, addNewPotsSchema } from "@/lib/validations";
+import { addPot, getThemes } from "@/app/(dashboard)/pots/actions";
 import { toast } from "@/hooks/use-toast";
 import { useQuery } from "react-query";
 import { getColorHexCode } from "@/lib/utils";
-import {
-  addNewBudgetSchema,
-  AddNewBudgetSchema,
-  Categories,
-} from "@/lib/validations";
-import { addBudget } from "@/app/(dashboard)/budgets/actions";
 
 type PostType = {
   name: string;
@@ -43,9 +37,9 @@ type PostType = {
   isUsed: boolean;
 };
 
-export default function AddnewBudget() {
-  const form = useForm<AddNewBudgetSchema>({
-    resolver: zodResolver(addNewBudgetSchema),
+export default function AddNewPot() {
+  const form = useForm<AddNewPotsFormSchema>({
+    resolver: zodResolver(addNewPotsSchema),
   });
 
   const { data: POST_RESPONSE, isLoading } = useQuery("posts", async () =>
@@ -59,15 +53,19 @@ export default function AddnewBudget() {
     formState: { isSubmitting },
   } = form;
 
-  async function onSubmit(values: AddNewBudgetSchema) {
-    const res = await addBudget(values);
+  async function onSubmit(values: AddNewPotsFormSchema) {
+    const res = await addPot({
+      name: values.potName,
+      target: values.target,
+      theme: values.theme,
+    });
     if (res.success) {
       toast({
         title: "Success",
         description: res.message,
       });
-
-      setTimeout(() => window.location.reload(), 2000);
+      reset({ potName: "", target: 0, theme: "GREEN" });
+      window.location.reload();
     }
 
     if (!res.success) {
@@ -82,7 +80,7 @@ export default function AddnewBudget() {
   return (
     <DialogContent className="w-full">
       <DialogHeader className="w-full">
-        <DialogTitle>Add New Budget</DialogTitle>
+        <DialogTitle>Add New Pot</DialogTitle>
         <DialogDescription asChild>
           <div className="flex w-full flex-col">
             <p className="my-5">
@@ -97,41 +95,42 @@ export default function AddnewBudget() {
                 >
                   <FormField
                     control={form.control}
-                    name="categories"
+                    name="potName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Category</FormLabel>
+                        <FormLabel>Pot Name</FormLabel>
                         <FormControl>
-                          <Select onValueChange={field.onChange}>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a category" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {Categories.map((option) => (
-                                <SelectItem key={option} value={option}>
-                                  {option}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                          <Input
+                            placeholder="e.g. Rainy Days"
+                            maxLength={30}
+                            {...field}
+                            onChange={(e) => {
+                              if (e.target.value.length <= 30) {
+                                field.onChange(e);
+                              }
+                            }}
+                          />
                         </FormControl>
+                        <FormDescription>
+                          {30 - (field.value?.length || 0)} characters left
+                        </FormDescription>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="maximumSpend"
+                    name="target"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Maximum Spend</FormLabel>
+                        <FormLabel>Target Amount</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="e.g. $2000"
+                            type="number"
+                            placeholder="$ e.g. 2000"
                             {...field}
                             onChange={(e) =>
-                              field.onChange(parseFloat(e.target.value) || 1)
+                              field.onChange(parseFloat(e.target.value))
                             }
                           />
                         </FormControl>

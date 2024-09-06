@@ -3,7 +3,7 @@ import { Dots } from "@/components/ui/icons";
 import { Progress } from "@/components/ui/progress";
 import React from "react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import AddnewBudget from "@/modals/add-new-budget";
+import AddnewBudget from "@/modals/add-new-pot";
 import { Pot } from "@prisma/client";
 import db from "@/lib/db";
 import { getColorHexCode } from "@/lib/utils";
@@ -16,6 +16,7 @@ import DeletePotModal from "@/modals/delete-pot";
 import UpdatePotModal from "@/modals/update-pot-modal";
 import AddMoneyModal from "@/modals/add-money-modal";
 import WithdrawMoney from "@/modals/withdraw-money";
+import AddNewPot from "@/modals/add-new-pot";
 
 export default async function PotsPage() {
   const POTS = await db.pot.findMany({
@@ -30,7 +31,7 @@ export default async function PotsPage() {
           <DialogTrigger asChild>
             <Button>+Add New Budget</Button>
           </DialogTrigger>
-          <AddnewBudget />
+          <AddNewPot />
         </Dialog>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
