@@ -141,7 +141,7 @@ export function DataTable<TData, TValue>({
                   if (value === "all") {
                     setColumnFilters([]);
                   } else {
-                    setColumnFilters([{ id: "category", value }]);
+                    setColumnFilters([{ id: "Category", value }]);
                   }
                 }}
               >

@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/chart";
 import { Label, Pie, PieChart } from "recharts";
 import React from "react";
+import { cn } from "@/lib/utils";
 
 const chartConfig = {
   amount: {
@@ -19,11 +20,22 @@ export const description = "A donut chart with text";
 
 export function ChartSection({ chartData }: { chartData: any }) {
   const totalAmount = React.useMemo(() => {
-    return chartData.reduce((acc: any, curr: any) => acc + curr.amount, 0);
+    return chartData.reduce(
+      (acc: any, curr: any) => acc + Math.abs(curr.amount),
+      0,
+    );
+  }, [chartData]);
+  const totalSpent = React.useMemo(() => {
+    return chartData.reduce(
+      (acc: any, curr: any) => acc + Math.abs(curr.totalSpent),
+      0,
+    );
   }, [chartData]);
 
+  const slicedChartData = chartData.slice(0, 4);
+
   return (
-    <div className="w-full rounded-lg bg-white p-5 text-grey-500 md:p-8">
+    <div className="w-full self-start rounded-lg bg-white p-5 text-grey-500 md:p-8">
       <div className="flex flex-col gap-8 md:flex-row lg:flex-col">
         <div className="mx-auto h-full w-full md:max-w-[296px]">
           <ChartContainer
@@ -62,12 +74,14 @@ export function ChartSection({ chartData }: { chartData: any }) {
                             y={viewBox.cy}
                             className="fill-foreground text-3xl font-bold"
                           >
-                            ${totalAmount.toLocaleString()}
+                            ${totalSpent.toLocaleString()}
                           </tspan>
                           <tspan
                             x={viewBox.cx}
                             y={(viewBox.cy || 0) + 24}
-                            className="fill-muted-foreground"
+                            className={cn("fill-muted-foreground", {
+                              "fill-secondary-red": totalSpent > totalAmount,
+                            })}
                           >
                             of ${totalAmount.toLocaleString()} limit
                           </tspan>
@@ -83,7 +97,7 @@ export function ChartSection({ chartData }: { chartData: any }) {
         <div className="flex w-full flex-col">
           <h3 className="text-preset-2 text-grey-900">Spending Summary</h3>
           <div className="mt-6 flex flex-col gap-4">
-            {chartData.map((item: any, index: any) => (
+            {slicedChartData.map((item: any, index: any) => (
               <div
                 key={index}
                 className={`relative flex items-center justify-between pb-4 pl-4 ${
@@ -100,7 +114,7 @@ export function ChartSection({ chartData }: { chartData: any }) {
                 </h4>
                 <p className="text-preset-4 font-normal text-grey-500">
                   <span className="text-preset-3 text-grey-900">
-                    ${item.totalSpent?.toFixed(2) ?? "N/A"}
+                    ${Math.abs(item.totalSpent)?.toFixed(2) ?? "N/A"}
                   </span>{" "}
                   of ${item.amount.toFixed(2)}
                 </p>

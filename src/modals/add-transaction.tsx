@@ -212,9 +212,14 @@ export default function AddnewTransaction() {
                             placeholder="e.g $1000"
                             {...field}
                             type="number"
-                            onChange={(e) =>
-                              field.onChange(parseFloat(e.target.value) || 1)
-                            }
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              if (value === "" || value === "-") {
+                                field.onChange(value);
+                              } else {
+                                field.onChange(parseFloat(value));
+                              }
+                            }}
                           />
                         </FormControl>
                         <FormMessage />

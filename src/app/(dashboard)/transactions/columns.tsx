@@ -34,12 +34,12 @@ export const columns: ColumnDef<Transaction>[] = [
     },
   },
   {
-    accessorKey: "category",
+    accessorKey: "Category",
     header: () => (
       <h6 className="text-preset-5 font-normal text-grey-500">Category</h6>
     ),
     cell: ({ row }) => {
-      const category = row.getValue("category") as React.ReactNode;
+      const category = row.getValue("Category") as React.ReactNode;
       return (
         <p className="text-preset-5 font-normal text-grey-500">{category}</p>
       );
