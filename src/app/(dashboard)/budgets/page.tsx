@@ -211,7 +211,7 @@ function ContentSection({ data }: { data: any }) {
                   ))
               ) : (
                 <p className="text-preset-4 text-center font-normal text-grey-500">
-                  You haven't made any spendings yet.
+                  You haven&apos;t made any spendings yet.
                 </p>
               )}
             </div>
