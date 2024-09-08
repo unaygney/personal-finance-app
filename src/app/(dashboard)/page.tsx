@@ -9,6 +9,7 @@ import { decrypt } from "@/lib/auth";
 import Chart from "./chart";
 import { Pot, Transaction } from "@prisma/client";
 import { format } from "date-fns";
+import LogoutButton from "@/components/logout-button";
 export default async function Dashboard() {
   const userId = await decrypt();
 
@@ -54,7 +55,10 @@ export default async function Dashboard() {
   });
   return (
     <div className="container mx-auto flex flex-col gap-8">
-      <h1 className="text-preset-1 text-grey-900">Overview</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-preset-1 text-grey-900">Overview</h1>
+        <LogoutButton />
+      </div>
       <Balance transactions={transactions} />
 
       <div className="columns-1 gap-4 lg:columns-2">
