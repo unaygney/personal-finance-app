@@ -53,7 +53,7 @@ export const addPot = async ({
         userId,
       },
     });
-    revalidatePath("/pots");
+    revalidatePath("/", "layout");
     return { success: true, message: "Pot added successfully" };
   } catch (error) {
     console.error("Error adding pot:", error);
@@ -95,7 +95,7 @@ export const deletePot = async (potId: number) => {
         id: potId,
       },
     });
-    revalidatePath("/pots");
+    revalidatePath("/", "layout");
     return { success: true, message: "Pot deleted successfully" };
   } catch (error) {
     console.error("Error deleting pot:", error);
@@ -119,7 +119,7 @@ export const updatePot = async (id: number, values: AddNewPotsFormSchema) => {
       },
     });
 
-    revalidatePath("/pots");
+    revalidatePath("/", "layout");
     return {
       success: true,
       message: "Pot updated successfully",
@@ -161,7 +161,7 @@ export const withdrawMoney = async (potId: number, amount: number) => {
       },
     });
 
-    revalidatePath("/pots");
+    revalidatePath("/", "layout");
     return { success: true, message: "Money withdrawn successfully" };
   } catch (error) {
     console.error("Error withdrawing money:", error);
@@ -201,7 +201,7 @@ export const addMoney = async (potId: number, amount: number) => {
       },
     });
 
-    revalidatePath("/pots");
+    revalidatePath("/", "layout");
 
     return { success: true, message: "Money added successfully" };
   } catch (error) {
