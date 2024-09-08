@@ -27,6 +27,9 @@ export async function saveRefreshToken(userId: string, refreshToken: string) {
     ex: 7 * 24 * 60 * 60,
   });
 }
+export async function deleteRefreshToken(userId: string) {
+  await redis.del(`refreshToken:${userId}`);
+}
 export async function saveUserInRedis(user: {
   id: string;
   email: string;
@@ -35,6 +38,9 @@ export async function saveUserInRedis(user: {
   await redis.set(`user:${user.id}`, JSON.stringify(user), {
     ex: 7 * 24 * 60 * 60,
   });
+}
+export async function deleteUserInRedis(id: string) {
+  await redis.del(`user:${id}`);
 }
 export async function getUserFromRedis(userId: string) {
   const user = await redis.get(`user:${userId}`);

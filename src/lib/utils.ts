@@ -61,3 +61,5 @@ export const logoMapping: Record<string, string> = {
   Shopping: "/images/Logo-6.jpg",
   General: "/images/Logo-8.jpg",
 };
+export const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
