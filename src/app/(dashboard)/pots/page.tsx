@@ -17,10 +17,24 @@ import UpdatePotModal from "@/modals/update-pot-modal";
 import AddMoneyModal from "@/modals/add-money-modal";
 import WithdrawMoney from "@/modals/withdraw-money";
 import AddNewPot from "@/modals/add-new-pot";
+import { Metadata } from "next";
+import { decrypt } from "@/lib/auth";
+import { redirect } from "next/navigation";
+
+export const metadata: Metadata = {
+  title: "Pots",
+  description: "Manage your pots and track your savings",
+};
 
 export default async function PotsPage() {
+  const userId = await decrypt();
+
+  if (!userId || typeof userId !== "string") {
+    redirect("/login");
+  }
+
   const POTS = await db.pot.findMany({
-    where: { userId: "cad5da4a-7dae-4c5c-9b2b-d71f5f8a95a2" },
+    where: { userId: userId },
   });
 
   return (
@@ -29,7 +43,7 @@ export default async function PotsPage() {
         <h1 className="text-preset-1 text-grey-900">Pots</h1>
         <Dialog>
           <DialogTrigger asChild>
-            <Button>+Add New Budget</Button>
+            <Button>+Add New Pot</Button>
           </DialogTrigger>
           <AddNewPot />
         </Dialog>

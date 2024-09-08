@@ -18,6 +18,12 @@ import {
 } from "@/components/ui/popover";
 import DeleteBudget from "@/modals/delete-budget";
 import UpdateBudget from "@/modals/update-budget";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Budgets",
+  description: "Manage your budgets and track your spending",
+};
 
 export default async function BudgetsPage() {
   const userId = await decrypt();
@@ -69,7 +75,7 @@ export default async function BudgetsPage() {
         </Dialog>
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,428px)_1fr]">
-        <ChartSection chartData={chartData} />
+        {chartData.length > 0 ? <ChartSection chartData={chartData} /> : null}
         <div className="flex flex-col gap-6">
           {chartData.map((data) => (
             <ContentSection key={data.category} data={data} />

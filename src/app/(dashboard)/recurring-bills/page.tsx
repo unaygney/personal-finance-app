@@ -8,11 +8,17 @@ import { decrypt } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import db from "@/lib/db";
 import { Balance, Transaction } from "@prisma/client";
+import { Metadata } from "next";
 
 const DataTable = dynamic<{
   columns: ColumnDef<Transaction>[];
   data: Transaction[];
 }>(() => import("./data-table").then((mod) => mod.DataTable), { ssr: false });
+
+export const metadata: Metadata = {
+  title: "Recurring Bills",
+  description: "Manage your budgets and track your spending",
+};
 
 export default async function RecurringBills() {
   const userId = await decrypt();
