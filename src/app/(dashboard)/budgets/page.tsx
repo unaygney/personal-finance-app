@@ -1,56 +1,59 @@
-import { Button } from "@/components/ui/button";
-import React from "react";
-import { ChartSection } from "./chart-section";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import AddnewBudget from "@/modals/add-new-budget";
-import db from "@/lib/db";
-import { decrypt } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { getColorHexCode } from "@/lib/utils";
-import { CaretRight, Dots } from "@/components/ui/icons";
-import { Progress } from "@/components/ui/progress";
-import Link from "next/link";
-import Image from "next/image";
+import { Metadata } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import React from 'react'
+
+import { decrypt } from '@/lib/auth'
+import db from '@/lib/db'
+import { getColorHexCode } from '@/lib/utils'
+
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { CaretRight, Dots } from '@/components/ui/icons'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import DeleteBudget from "@/modals/delete-budget";
-import UpdateBudget from "@/modals/update-budget";
-import { Metadata } from "next";
+} from '@/components/ui/popover'
+import { Progress } from '@/components/ui/progress'
+
+import { ChartSection } from './chart-section'
+import AddnewBudget from '@/modals/add-new-budget'
+import DeleteBudget from '@/modals/delete-budget'
+import UpdateBudget from '@/modals/update-budget'
 
 export const metadata: Metadata = {
-  title: "Budgets",
-  description: "Manage your budgets and track your spending",
-};
+  title: 'Budgets',
+  description: 'Manage your budgets and track your spending',
+}
 
 export default async function BudgetsPage() {
-  const userId = await decrypt();
+  const userId = await decrypt()
 
-  if (!userId) redirect("/login");
+  if (!userId) redirect('/login')
 
   const budgets = await db.budget.findMany({
     where: {
       userId: userId,
     },
-  });
+  })
   const transactions = await db.transaction.findMany({
     where: {
       userId: userId,
     },
-  });
+  })
 
   const chartData = budgets.map((budget) => {
     const categoryTransactions = transactions.filter((transaction) => {
-      return transaction.Category === budget.category;
-    });
+      return transaction.Category === budget.category
+    })
 
     const totalSpent = categoryTransactions.reduce((acc, transaction) => {
-      return acc + transaction.amount;
-    }, 0);
+      return acc + transaction.amount
+    }, 0)
 
-    const latestTransactions = categoryTransactions.slice(0, 3);
+    const latestTransactions = categoryTransactions.slice(0, 3)
 
     return {
       id: budget.id,
@@ -60,8 +63,8 @@ export default async function BudgetsPage() {
       totalSpent: totalSpent,
       remaining: budget.amount - Math.abs(totalSpent),
       latestTransaction: latestTransactions,
-    };
-  });
+    }
+  })
 
   return (
     <div className="container flex flex-col gap-8">
@@ -83,7 +86,7 @@ export default async function BudgetsPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function ContentSection({ data }: { data: any }) {
@@ -175,7 +178,7 @@ function ContentSection({ data }: { data: any }) {
               <h4 className="text-preset-3 text-grey-900">Latest Spending</h4>
               <Link
                 className="text-preset-4 inline-flex items-center gap-3 font-normal text-grey-500"
-                href={"/transactions"}
+                href={'/transactions'}
               >
                 See All
                 <CaretRight />
@@ -225,5 +228,5 @@ function ContentSection({ data }: { data: any }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

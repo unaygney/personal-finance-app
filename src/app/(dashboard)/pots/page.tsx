@@ -1,41 +1,43 @@
-import { Button } from "@/components/ui/button";
-import { Dots } from "@/components/ui/icons";
-import { Progress } from "@/components/ui/progress";
-import React from "react";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import AddnewBudget from "@/modals/add-new-pot";
-import { Pot } from "@prisma/client";
-import db from "@/lib/db";
-import { getColorHexCode } from "@/lib/utils";
+import { Pot } from '@prisma/client'
+import { Metadata } from 'next'
+import { redirect } from 'next/navigation'
+import React from 'react'
+
+import { decrypt } from '@/lib/auth'
+import db from '@/lib/db'
+import { getColorHexCode } from '@/lib/utils'
+
+import { Button } from '@/components/ui/button'
+import { Dialog, DialogTrigger } from '@/components/ui/dialog'
+import { Dots } from '@/components/ui/icons'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import DeletePotModal from "@/modals/delete-pot";
-import UpdatePotModal from "@/modals/update-pot-modal";
-import AddMoneyModal from "@/modals/add-money-modal";
-import WithdrawMoney from "@/modals/withdraw-money";
-import AddNewPot from "@/modals/add-new-pot";
-import { Metadata } from "next";
-import { decrypt } from "@/lib/auth";
-import { redirect } from "next/navigation";
+} from '@/components/ui/popover'
+import { Progress } from '@/components/ui/progress'
+
+import AddMoneyModal from '@/modals/add-money-modal'
+import AddNewPot from '@/modals/add-new-pot'
+import DeletePotModal from '@/modals/delete-pot'
+import UpdatePotModal from '@/modals/update-pot-modal'
+import WithdrawMoney from '@/modals/withdraw-money'
 
 export const metadata: Metadata = {
-  title: "Pots",
-  description: "Manage your pots and track your savings",
-};
+  title: 'Pots',
+  description: 'Manage your pots and track your savings',
+}
 
 export default async function PotsPage() {
-  const userId = await decrypt();
+  const userId = await decrypt()
 
-  if (!userId || typeof userId !== "string") {
-    redirect("/login");
+  if (!userId || typeof userId !== 'string') {
+    redirect('/login')
   }
 
   const POTS = await db.pot.findMany({
     where: { userId: userId },
-  });
+  })
 
   return (
     <div className="container flex flex-col gap-8">
@@ -54,7 +56,7 @@ export default async function PotsPage() {
         ))}
       </div>
     </div>
-  );
+  )
 }
 
 function PotCard({ pot }: { pot: Pot }) {
@@ -147,5 +149,5 @@ function PotCard({ pot }: { pot: Pot }) {
         </Dialog>
       </div>
     </div>
-  );
+  )
 }
