@@ -1,11 +1,27 @@
-"use client";
+'use client'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import { format, formatISO } from 'date-fns'
+import { CalendarIcon } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { useQuery } from 'react-query'
+
+import { cn } from '@/lib/utils'
+import {
+  AddNewTransactionFormSchema,
+  Categories,
+  addNewTransactionSchema,
+} from '@/lib/validations'
+
+import { Button } from '@/components/ui/button'
+import { Calendar } from '@/components/ui/calendar'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -14,42 +30,30 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import {
-  AddNewTransactionFormSchema,
-  addNewTransactionSchema,
-  Categories,
-} from "@/lib/validations";
+} from '@/components/ui/select'
 
-import { toast } from "@/hooks/use-toast";
-import { useQuery } from "react-query";
-import { Checkbox } from "@/components/ui/checkbox";
-import { format, formatISO } from "date-fns";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { addTransaction } from "@/app/(dashboard)/transactions/actions";
+import { addTransaction } from '@/app/(dashboard)/transactions/actions'
+
+import { toast } from '@/hooks/use-toast'
 
 type PostType = {
-  name: string;
-  value: string;
-  isUsed: boolean;
-};
+  name: string
+  value: string
+  isUsed: boolean
+}
 
 export default function AddnewTransaction() {
   const form = useForm<AddNewTransactionFormSchema>({
@@ -57,38 +61,38 @@ export default function AddnewTransaction() {
     defaultValues: {
       recurring: false,
     },
-  });
+  })
 
   const {
     reset,
     formState: { isSubmitting, errors },
-  } = form;
+  } = form
 
   async function onSubmit(values: AddNewTransactionFormSchema) {
-    const res = await addTransaction(values);
+    const res = await addTransaction(values)
     if (res.success) {
       toast({
-        title: "Success",
+        title: 'Success',
         description: res.message,
-      });
+      })
       reset({
-        name: "",
+        name: '',
         amount: 0,
         recurring: false,
-        category: "Bills",
-        avatar: "",
-        date: "",
-      });
+        category: 'Bills',
+        avatar: '',
+        date: '',
+      })
 
-      setTimeout(() => window.location.reload(), 2000);
+      setTimeout(() => window.location.reload(), 2000)
     }
 
     if (!res.success) {
       toast({
-        title: "Error",
+        title: 'Error',
         description: res.message,
-        variant: "destructive",
-      });
+        variant: 'destructive',
+      })
     }
   }
 
@@ -117,7 +121,7 @@ export default function AddnewTransaction() {
                             {...field}
                             onChange={(e) => {
                               if (e.target.value.length <= 30) {
-                                field.onChange(e);
+                                field.onChange(e)
                               }
                             }}
                           />
@@ -139,14 +143,14 @@ export default function AddnewTransaction() {
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
-                                variant={"secondary"}
+                                variant={'secondary'}
                                 className={cn(
-                                  "w-full pl-3 text-left font-normal",
-                                  !field.value && "text-muted-foreground",
+                                  'w-full pl-3 text-left font-normal',
+                                  !field.value && 'text-muted-foreground'
                                 )}
                               >
                                 {field.value ? (
-                                  format(field.value, "PPP")
+                                  format(field.value, 'PPP')
                                 ) : (
                                   <span>Pick a date</span>
                                 )}
@@ -154,14 +158,18 @@ export default function AddnewTransaction() {
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
+                          <PopoverContent
+                            style={{ pointerEvents: 'auto' }}
+                            className="w-auto p-0"
+                            align="start"
+                          >
                             <Calendar
                               mode="single"
                               selected={
                                 field.value ? new Date(field.value) : undefined
                               }
                               onSelect={(date) =>
-                                field.onChange(date ? formatISO(date) : "")
+                                field.onChange(date ? formatISO(date) : '')
                               }
                               disabled={(date: any) =>
                                 date < new Date(new Date().setHours(0, 0, 0, 0))
@@ -213,11 +221,11 @@ export default function AddnewTransaction() {
                             {...field}
                             type="number"
                             onChange={(e) => {
-                              const value = e.target.value;
-                              if (value === "" || value === "-") {
-                                field.onChange(value);
+                              const value = e.target.value
+                              if (value === '' || value === '-') {
+                                field.onChange(value)
                               } else {
-                                field.onChange(parseFloat(value));
+                                field.onChange(parseFloat(value))
                               }
                             }}
                           />
@@ -258,5 +266,5 @@ export default function AddnewTransaction() {
         </DialogDescription>
       </DialogHeader>
     </DialogContent>
-  );
+  )
 }
