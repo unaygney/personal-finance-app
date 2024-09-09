@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Pot } from '@prisma/client'
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 
 import { getColorHexCode } from '@/lib/utils'
 import { AddMoneyFormSchema, addMoneySchema } from '@/lib/validations'
@@ -13,7 +12,6 @@ import { Button } from '@/components/ui/button'
 import {
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'

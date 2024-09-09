@@ -1,11 +1,19 @@
-"use client";
+'use client'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { useQuery } from 'react-query'
+
+import { getColorHexCode } from '@/lib/utils'
+import { AddNewPotsFormSchema, addNewPotsSchema } from '@/lib/validations'
+
+import { Button } from '@/components/ui/button'
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -14,66 +22,63 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { AddNewPotsFormSchema, addNewPotsSchema } from "@/lib/validations";
-import { addPot, getThemes } from "@/app/(dashboard)/pots/actions";
-import { toast } from "@/hooks/use-toast";
-import { useQuery } from "react-query";
-import { getColorHexCode } from "@/lib/utils";
+} from '@/components/ui/select'
+
+import { addPot, getThemes } from '@/app/(dashboard)/pots/actions'
+
+import { toast } from '@/hooks/use-toast'
 
 type PostType = {
-  name: string;
-  value: string;
-  isUsed: boolean;
-};
+  name: string
+  value: string
+  isUsed: boolean
+}
 
 export default function AddNewPot() {
   const form = useForm<AddNewPotsFormSchema>({
     resolver: zodResolver(addNewPotsSchema),
-  });
+  })
 
-  const { data: POST_RESPONSE, isLoading } = useQuery("posts", async () =>
-    getThemes(),
-  );
+  const { data: POST_RESPONSE, isLoading } = useQuery('posts', async () =>
+    getThemes()
+  )
 
-  const POSTS: PostType[] = POST_RESPONSE?.success ? POST_RESPONSE.data : [];
+  const POSTS: PostType[] = POST_RESPONSE?.success ? POST_RESPONSE.data : []
 
   const {
     reset,
     formState: { isSubmitting },
-  } = form;
+  } = form
 
   async function onSubmit(values: AddNewPotsFormSchema) {
     const res = await addPot({
       name: values.potName,
       target: values.target,
       theme: values.theme,
-    });
+    })
     if (res.success) {
       toast({
-        title: "Success",
+        title: 'Success',
         description: res.message,
-      });
-      reset({ potName: "", target: 0, theme: "GREEN" });
-      window.location.reload();
+      })
+      reset({ potName: '', target: 0, theme: 'GREEN' })
+      window.location.reload()
     }
 
     if (!res.success) {
       toast({
-        title: "Error",
+        title: 'Error',
         description: res.message,
-        variant: "destructive",
-      });
+        variant: 'destructive',
+      })
     }
   }
 
@@ -106,7 +111,7 @@ export default function AddNewPot() {
                             {...field}
                             onChange={(e) => {
                               if (e.target.value.length <= 30) {
-                                field.onChange(e);
+                                field.onChange(e)
                               }
                             }}
                           />
@@ -153,8 +158,8 @@ export default function AddNewPot() {
                               <SelectValue
                                 placeholder={
                                   isLoading
-                                    ? "Loading themes..."
-                                    : "Select a theme"
+                                    ? 'Loading themes...'
+                                    : 'Select a theme'
                                 }
                               />
                             </SelectTrigger>
@@ -176,7 +181,7 @@ export default function AddNewPot() {
                                           className="mr-2 h-4 w-4 rounded-full"
                                           style={{
                                             backgroundColor: getColorHexCode(
-                                              post.value,
+                                              post.value
                                             ),
                                           }}
                                         />
@@ -218,5 +223,5 @@ export default function AddNewPot() {
         </DialogDescription>
       </DialogHeader>
     </DialogContent>
-  );
+  )
 }

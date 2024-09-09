@@ -1,35 +1,38 @@
-"use client";
-import React, { useTransition } from "react";
+'use client'
+
+import React, { useTransition } from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { deletePot } from "@/app/(dashboard)/pots/actions";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/dialog'
+
+import { deletePot } from '@/app/(dashboard)/pots/actions'
+
+import { useToast } from '@/hooks/use-toast'
 
 export default function DeletePotModal({ potId }: { potId: number }) {
-  const { toast } = useToast();
-  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast()
+  const [isPending, startTransition] = useTransition()
 
   const onDelete = async () => {
     startTransition(async () => {
-      const res = await deletePot(potId);
+      const res = await deletePot(potId)
 
       if (res.success) {
         toast({
-          title: "Success",
+          title: 'Success',
           description: res.message,
-        });
-        window.location.reload();
+        })
+        window.location.reload()
       }
-    });
-  };
+    })
+  }
 
   return (
     <DialogContent>
@@ -56,5 +59,5 @@ export default function DeletePotModal({ potId }: { potId: number }) {
         </DialogClose>
       </DialogFooter>
     </DialogContent>
-  );
+  )
 }

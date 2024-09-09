@@ -6,7 +6,7 @@ import React from 'react'
 
 import { decrypt } from '@/lib/auth'
 import db from '@/lib/db'
-import { getColorHexCode } from '@/lib/utils'
+import { cn, getColorHexCode } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
@@ -49,11 +49,11 @@ export default async function BudgetsPage() {
       return transaction.Category === budget.category
     })
 
+    const latestTransactions = categoryTransactions.slice(0, 3)
+
     const totalSpent = categoryTransactions.reduce((acc, transaction) => {
       return acc + transaction.amount
     }, 0)
-
-    const latestTransactions = categoryTransactions.slice(0, 3)
 
     return {
       id: budget.id,
@@ -215,8 +215,14 @@ function ContentSection({ data }: { data: any }) {
                       </div>
 
                       <div className="flex flex-col justify-between text-right">
-                        <p className="text-preset-5 font-bold text-grey-900">
-                          {`-$${Math.abs(transaction.amount).toFixed(2)}`}
+                        <p
+                          className={cn(
+                            'text-preset-5 font-bold text-secondary-red',
+                            { 'text-secondary-green': transaction.amount > 0 }
+                          )}
+                        >
+                          {transaction.amount < 0 ? '-' : '+'}
+                          {`$${Math.abs(transaction.amount).toFixed(2)}`}
                         </p>
                         <p className="text-preset-5 text-grey-500">
                           {new Date(transaction.date).toLocaleDateString()}

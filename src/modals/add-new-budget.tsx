@@ -1,11 +1,23 @@
-"use client";
+'use client'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { useQuery } from 'react-query'
+
+import { getColorHexCode } from '@/lib/utils'
+import {
+  AddNewBudgetSchema,
+  Categories,
+  addNewBudgetSchema,
+} from '@/lib/validations'
+
+import { Button } from '@/components/ui/button'
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -14,68 +26,60 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+} from '@/components/ui/select'
 
-import { getThemes } from "@/app/(dashboard)/pots/actions";
-import { toast } from "@/hooks/use-toast";
-import { useQuery } from "react-query";
-import { getColorHexCode } from "@/lib/utils";
-import {
-  addNewBudgetSchema,
-  AddNewBudgetSchema,
-  Categories,
-} from "@/lib/validations";
-import { addBudget } from "@/app/(dashboard)/budgets/actions";
+import { addBudget } from '@/app/(dashboard)/budgets/actions'
+import { getThemes } from '@/app/(dashboard)/pots/actions'
+
+import { toast } from '@/hooks/use-toast'
 
 type PostType = {
-  name: string;
-  value: string;
-  isUsed: boolean;
-};
+  name: string
+  value: string
+  isUsed: boolean
+}
 
 export default function AddnewBudget() {
   const form = useForm<AddNewBudgetSchema>({
     resolver: zodResolver(addNewBudgetSchema),
-  });
+  })
 
-  const { data: POST_RESPONSE, isLoading } = useQuery("posts", async () =>
-    getThemes(),
-  );
+  const { data: POST_RESPONSE, isLoading } = useQuery('posts', async () =>
+    getThemes()
+  )
 
-  const POSTS: PostType[] = POST_RESPONSE?.success ? POST_RESPONSE.data : [];
+  const POSTS: PostType[] = POST_RESPONSE?.success ? POST_RESPONSE.data : []
 
   const {
     reset,
     formState: { isSubmitting },
-  } = form;
+  } = form
 
   async function onSubmit(values: AddNewBudgetSchema) {
-    const res = await addBudget(values);
+    const res = await addBudget(values)
     if (res.success) {
       toast({
-        title: "Success",
+        title: 'Success',
         description: res.message,
-      });
+      })
 
-      setTimeout(() => window.location.reload(), 2000);
+      setTimeout(() => window.location.reload(), 2000)
     }
 
     if (!res.success) {
       toast({
-        title: "Error",
+        title: 'Error',
         description: res.message,
-        variant: "destructive",
-      });
+        variant: 'destructive',
+      })
     }
   }
 
@@ -154,8 +158,8 @@ export default function AddnewBudget() {
                               <SelectValue
                                 placeholder={
                                   isLoading
-                                    ? "Loading themes..."
-                                    : "Select a theme"
+                                    ? 'Loading themes...'
+                                    : 'Select a theme'
                                 }
                               />
                             </SelectTrigger>
@@ -177,7 +181,7 @@ export default function AddnewBudget() {
                                           className="mr-2 h-4 w-4 rounded-full"
                                           style={{
                                             backgroundColor: getColorHexCode(
-                                              post.value,
+                                              post.value
                                             ),
                                           }}
                                         />
@@ -219,5 +223,5 @@ export default function AddnewBudget() {
         </DialogDescription>
       </DialogHeader>
     </DialogContent>
-  );
+  )
 }

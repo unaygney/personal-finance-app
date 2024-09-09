@@ -1,77 +1,79 @@
-import React from "react";
+import { Transaction } from '@prisma/client'
+import { ColumnDef } from '@tanstack/react-table'
+import { Metadata } from 'next'
+import dynamic from 'next/dynamic'
+import { redirect } from 'next/navigation'
+import React from 'react'
 
-import { columns } from "./columns";
-import dynamic from "next/dynamic";
-import { ColumnDef } from "@tanstack/react-table";
-import { Receipt2 } from "@/components/ui/icons";
-import { decrypt } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import db from "@/lib/db";
-import { Balance, Transaction } from "@prisma/client";
-import { Metadata } from "next";
+import { decrypt } from '@/lib/auth'
+import db from '@/lib/db'
+
+import { Receipt2 } from '@/components/ui/icons'
+
+import { columns } from './columns'
 
 const DataTable = dynamic<{
-  columns: ColumnDef<Transaction>[];
-  data: Transaction[];
-}>(() => import("./data-table").then((mod) => mod.DataTable), { ssr: false });
+  columns: ColumnDef<Transaction>[]
+  data: Transaction[]
+}>(() => import('./data-table').then((mod) => mod.DataTable), { ssr: false })
 
 export const metadata: Metadata = {
-  title: "Recurring Bills",
-  description: "Manage your budgets and track your spending",
-};
+  title: 'Recurring Bills',
+  description: 'Manage your budgets and track your spending',
+}
 
 export default async function RecurringBills() {
-  const userId = await decrypt();
+  const userId = await decrypt()
 
   if (!userId) {
-    redirect("/login");
+    redirect('/login')
   }
 
   const data = await db.transaction.findMany({
     where: {
       userId,
     },
-  });
+  })
 
   const recurringData = data.filter(
-    (transaction) => transaction.recurring && transaction.amount < 0,
-  );
+    (transaction) => transaction.recurring && transaction.amount < 0
+  )
 
   const paidBills = recurringData.filter(
-    (transaction) => new Date(transaction.date) < new Date(),
-  );
+    (transaction) => new Date(transaction.date) < new Date()
+  )
 
   const upcomingBills = recurringData.filter(
-    (transaction) => new Date(transaction.date) >= new Date(),
-  );
+    (transaction) => new Date(transaction.date) >= new Date()
+  )
 
   const dueSoonBills = recurringData.filter((transaction) => {
-    const today = new Date();
-    const dueDate = new Date(transaction.date);
+    const today = new Date()
+    const dueDate = new Date(transaction.date)
     const diffInDays =
-      (dueDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return diffInDays <= 3 && diffInDays >= 0;
-  });
+      (dueDate.getTime() - today.getTime()) / (1000 * 3600 * 24)
+    return diffInDays <= 3 && diffInDays >= 0
+  })
 
   const totalBillsAmount = recurringData.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+    0
+  )
 
   const paidBillsTotal = paidBills.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+    0
+  )
 
   const upcomingBillsTotal = upcomingBills.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+    0
+  )
 
   const dueSoonTotal = dueSoonBills.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+    0
+  )
 
   return (
     <div className="container flex flex-col gap-8">
@@ -89,7 +91,7 @@ export default async function RecurringBills() {
         <DataTable columns={columns} data={recurringData} />
       </div>
     </div>
-  );
+  )
 }
 
 function TotalBills({ total }: { total: number }) {
@@ -105,7 +107,7 @@ function TotalBills({ total }: { total: number }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function Summary({
@@ -113,9 +115,9 @@ function Summary({
   upcomingBillsTotal,
   dueSoonTotal,
 }: {
-  paidBillsTotal: number;
-  upcomingBillsTotal: number;
-  dueSoonTotal: number;
+  paidBillsTotal: number
+  upcomingBillsTotal: number
+  dueSoonTotal: number
 }) {
   return (
     <div className="w-full rounded-lg bg-white p-5">
@@ -143,5 +145,5 @@ function Summary({
         </div>
       </div>
     </div>
-  );
+  )
 }

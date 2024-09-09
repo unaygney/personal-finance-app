@@ -4,7 +4,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { format, formatISO } from 'date-fns'
 import { CalendarIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { useQuery } from 'react-query'
 
 import { cn } from '@/lib/utils'
 import {
@@ -49,12 +48,6 @@ import { addTransaction } from '@/app/(dashboard)/transactions/actions'
 
 import { toast } from '@/hooks/use-toast'
 
-type PostType = {
-  name: string
-  value: string
-  isUsed: boolean
-}
-
 export default function AddnewTransaction() {
   const form = useForm<AddNewTransactionFormSchema>({
     resolver: zodResolver(addNewTransactionSchema),
@@ -65,7 +58,7 @@ export default function AddnewTransaction() {
 
   const {
     reset,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
   } = form
 
   async function onSubmit(values: AddNewTransactionFormSchema) {

@@ -1,40 +1,43 @@
-"use client";
-import React, { useTransition } from "react";
+'use client'
+
+import React, { useTransition } from 'react'
+
+import { Button } from '@/components/ui/button'
 import {
-  Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
-import { deleteBudget } from "@/app/(dashboard)/budgets/actions";
+} from '@/components/ui/dialog'
+
+import { deleteBudget } from '@/app/(dashboard)/budgets/actions'
+
+import { useToast } from '@/hooks/use-toast'
 
 export default function DeleteBudget({
   id,
   category,
 }: {
-  category: string;
-  id: string | number;
+  category: string
+  id: string | number
 }) {
-  const { toast } = useToast();
-  const [isPending, startTransition] = useTransition();
+  const { toast } = useToast()
+  const [isPending, startTransition] = useTransition()
 
   const onDelete = async () => {
     startTransition(async () => {
-      const res = await deleteBudget(id);
+      const res = await deleteBudget(id)
       if (res.success) {
         toast({
-          title: "Success",
+          title: 'Success',
           description: res.message,
-        });
-        setTimeout(() => window.location.reload(), 2000);
+        })
+        setTimeout(() => window.location.reload(), 2000)
       }
-    });
-  };
+    })
+  }
 
   return (
     <DialogContent>
@@ -61,5 +64,5 @@ export default function DeleteBudget({
         </DialogClose>
       </DialogFooter>
     </DialogContent>
-  );
+  )
 }

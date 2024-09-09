@@ -1,5 +1,14 @@
-"use client";
-import React from "react";
+'use client'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { useQuery } from 'react-query'
+
+import { getColorHexCode } from '@/lib/utils'
+import { AddNewPotsFormSchema, addNewPotsSchema } from '@/lib/validations'
+
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -8,8 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -18,60 +26,57 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { AddNewPotsFormSchema, addNewPotsSchema } from "@/lib/validations";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { getColorHexCode } from "@/lib/utils";
-import { POSTS } from "@/app/(dashboard)/pots/constants";
-import { getPot, updatePot } from "@/app/(dashboard)/pots/actions";
-import { useToast } from "@/hooks/use-toast";
-import { useQuery } from "react-query";
+} from '@/components/ui/select'
+
+import { getPot, updatePot } from '@/app/(dashboard)/pots/actions'
+import { POSTS } from '@/app/(dashboard)/pots/constants'
+
+import { useToast } from '@/hooks/use-toast'
 
 export default function UpdatePotModal({ id }: { id: number }) {
-  const { toast } = useToast();
+  const { toast } = useToast()
 
   const form = useForm<AddNewPotsFormSchema>({
     resolver: zodResolver(addNewPotsSchema),
     defaultValues: {
-      potName: "",
+      potName: '',
       target: 0,
     },
-  });
+  })
 
   const {
     reset,
     setValue,
     formState: { isSubmitting },
-  } = form;
+  } = form
 
-  const { data } = useQuery(["pot", id], async () => getPot(id), {
+  const { data } = useQuery(['pot', id], async () => getPot(id), {
     onSuccess: (response) => {
       if (response.success && response.data) {
-        setValue("potName", response.data.name);
-        setValue("target", response.data.target);
-        setValue("theme", response.data.theme);
+        setValue('potName', response.data.name)
+        setValue('target', response.data.target)
+        setValue('theme', response.data.theme)
       }
     },
-  });
+  })
 
   async function onSubmit(values: AddNewPotsFormSchema) {
-    const res = await updatePot(id, values);
+    const res = await updatePot(id, values)
 
     if (res.success) {
       toast({
-        title: "Updated",
-        description: "Pot updated successfully",
-      });
-      window.location.reload();
+        title: 'Updated',
+        description: 'Pot updated successfully',
+      })
+      window.location.reload()
     }
   }
 
@@ -103,7 +108,7 @@ export default function UpdatePotModal({ id }: { id: number }) {
                             {...field}
                             onChange={(e) => {
                               if (e.target.value.length <= 30) {
-                                field.onChange(e);
+                                field.onChange(e)
                               }
                             }}
                           />
@@ -162,7 +167,7 @@ export default function UpdatePotModal({ id }: { id: number }) {
                                         className="mr-2 h-4 w-4 rounded-full"
                                         style={{
                                           backgroundColor: getColorHexCode(
-                                            post.value,
+                                            post.value
                                           ),
                                         }}
                                       />
@@ -189,7 +194,7 @@ export default function UpdatePotModal({ id }: { id: number }) {
                     type="submit"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? "Submitting..." : "Submit"}
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
                   </Button>
                 </form>
               </Form>
@@ -198,5 +203,5 @@ export default function UpdatePotModal({ id }: { id: number }) {
         </DialogDescription>
       </DialogHeader>
     </DialogContent>
-  );
+  )
 }

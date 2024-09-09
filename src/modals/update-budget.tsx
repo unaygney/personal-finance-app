@@ -1,12 +1,23 @@
-"use client";
-import React from "react";
+'use client'
+
+import { zodResolver } from '@hookform/resolvers/zod'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+
+import { getColorHexCode } from '@/lib/utils'
+import {
+  AddNewBudgetSchema,
+  Categories,
+  addNewBudgetSchema,
+} from '@/lib/validations'
+
+import { Button } from '@/components/ui/button'
 import {
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+} from '@/components/ui/dialog'
 import {
   Form,
   FormControl,
@@ -14,55 +25,47 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  addNewBudgetSchema,
-  AddNewBudgetSchema,
-  Categories,
-} from "@/lib/validations";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { getColorHexCode } from "@/lib/utils";
-import { POSTS } from "@/app/(dashboard)/pots/constants";
-import { useToast } from "@/hooks/use-toast";
-import { editBudget } from "@/app/(dashboard)/budgets/actions";
+} from '@/components/ui/select'
+
+import { editBudget } from '@/app/(dashboard)/budgets/actions'
+import { POSTS } from '@/app/(dashboard)/pots/constants'
+
+import { useToast } from '@/hooks/use-toast'
 
 export default function UpdateBudget({ id }: { id: number }) {
-  const { toast } = useToast();
+  const { toast } = useToast()
 
   const form = useForm<AddNewBudgetSchema>({
     resolver: zodResolver(addNewBudgetSchema),
-  });
+  })
 
   const {
-    reset,
-    setValue,
     formState: { isSubmitting },
-  } = form;
+  } = form
 
   async function onSubmit(values: AddNewBudgetSchema) {
-    const res = await editBudget(values, id);
+    const res = await editBudget(values, id)
 
     if (res.success) {
       toast({
-        title: "Success",
+        title: 'Success',
         description: res.message,
-      });
-      setTimeout(() => window.location.reload(), 2000);
+      })
+      setTimeout(() => window.location.reload(), 2000)
     } else {
       toast({
-        title: "Error",
+        title: 'Error',
         description: res.message,
-        variant: "destructive",
-      });
+        variant: 'destructive',
+      })
     }
   }
 
@@ -152,7 +155,7 @@ export default function UpdateBudget({ id }: { id: number }) {
                                         className="mr-2 h-4 w-4 rounded-full"
                                         style={{
                                           backgroundColor: getColorHexCode(
-                                            post.value,
+                                            post.value
                                           ),
                                         }}
                                       />
@@ -184,5 +187,5 @@ export default function UpdateBudget({ id }: { id: number }) {
         </DialogDescription>
       </DialogHeader>
     </DialogContent>
-  );
+  )
 }

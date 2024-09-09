@@ -1,19 +1,22 @@
-"use client";
-import React, { useTransition } from "react";
-import { Button } from "./ui/button";
-import { LogOut, Loader2 } from "lucide-react";
-import { logout } from "@/app/(dashboard)/actions";
-import { useRouter } from "next/navigation";
+'use client'
+
+import { Loader2, LogOut } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import React, { useTransition } from 'react'
+
+import { logout } from '@/app/(dashboard)/actions'
+
+import { Button } from './ui/button'
 
 export default function LogoutButton() {
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
   const handleLogout = () => {
     startTransition(() => {
-      logout();
-      router.refresh();
-    });
-  };
+      logout()
+      router.refresh()
+    })
+  }
 
   return (
     <Button
@@ -31,5 +34,5 @@ export default function LogoutButton() {
         </>
       )}
     </Button>
-  );
+  )
 }
