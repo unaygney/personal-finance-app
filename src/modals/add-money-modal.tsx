@@ -1,61 +1,68 @@
-"use client";
+'use client'
 
-import React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Pot } from '@prisma/client'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { Button } from "@/components/ui/button";
+import { getColorHexCode } from '@/lib/utils'
+import { AddMoneyFormSchema, addMoneySchema } from '@/lib/validations'
+
+import { Button } from '@/components/ui/button'
 import {
   DialogContent,
-  DialogHeader,
-  DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog";
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { getColorHexCode } from "@/lib/utils";
-import { Pot } from "@prisma/client";
-import { AddMoneyFormSchema, addMoneySchema } from "@/lib/validations";
-import { useToast } from "@/hooks/use-toast";
-import { addMoney } from "@/app/(dashboard)/pots/actions";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Progress } from '@/components/ui/progress'
+
+import { addMoney } from '@/app/(dashboard)/pots/actions'
+
+import { useToast } from '@/hooks/use-toast'
+
 export default function AddMoneyModal({ pot }: { pot: Pot }) {
-  const { toast } = useToast();
-  const maxAmount = pot.target - pot.total;
+  const { toast } = useToast()
+  const maxAmount = pot.target - pot.total
 
   const form = useForm<AddMoneyFormSchema>({
     resolver: zodResolver(addMoneySchema(maxAmount)),
     defaultValues: { amount: 1 },
-  });
+  })
 
-  const amount = parseFloat(form.watch("amount").toString() || "0");
+  const amount = parseFloat(form.watch('amount').toString() || '0')
 
   async function onSubmit(values: AddMoneyFormSchema) {
-    const res = await addMoney(pot.id, values.amount);
+    const res = await addMoney(pot.id, values.amount)
 
     if (res.success) {
       toast({
-        title: "Adding money successfully",
-        description: "You have successfully added money.",
-      });
+        title: 'Adding money successfully',
+        description: 'You have successfully added money.',
+      })
+      form.reset({ amount: 0 })
+
       setTimeout(() => {
-        window.location.reload();
-      }, 2000);
+        window.location.reload()
+      }, 2000)
     } else {
       toast({
-        title: "Error",
-        description: "An error occurred while processing your request",
-        variant: "destructive",
-      });
+        title: 'Error',
+        description: 'An error occurred while processing your request',
+        variant: 'destructive',
+      })
+      form.reset({ amount: 0 })
     }
   }
 
@@ -111,18 +118,18 @@ export default function AddMoneyModal({ pot }: { pot: Pot }) {
                             min={0}
                             max={maxAmount}
                             onChange={(e) => {
-                              let value = e.target.value;
-                              if (value === "") {
-                                field.onChange(value);
-                                return;
+                              let value = e.target.value
+                              if (value === '') {
+                                field.onChange(value)
+                                return
                               }
 
-                              let numericValue = parseFloat(value);
+                              let numericValue = parseFloat(value)
                               if (numericValue > maxAmount) {
-                                numericValue = maxAmount;
+                                numericValue = maxAmount
                               }
                               if (!isNaN(numericValue)) {
-                                field.onChange(numericValue);
+                                field.onChange(numericValue)
                               }
                             }}
                           />
@@ -142,5 +149,5 @@ export default function AddMoneyModal({ pot }: { pot: Pot }) {
         </DialogDescription>
       </DialogHeader>
     </DialogContent>
-  );
+  )
 }

@@ -51,9 +51,13 @@ export default async function PotsPage() {
         </Dialog>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {POTS.map((pot: Pot, idx) => (
-          <PotCard pot={pot} key={idx} />
-        ))}
+        {POTS.length > 0 ? (
+          POTS.map((pot: Pot, idx) => <PotCard pot={pot} key={idx} />)
+        ) : (
+          <p className="text-preset-4 text-start text-grey-300">
+            You don&apos;t have a pot account yet.
+          </p>
+        )}
       </div>
     </div>
   )

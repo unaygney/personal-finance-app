@@ -1,78 +1,81 @@
-"use client";
-import React, { useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { useOnClickOutside } from "usehooks-ts";
+'use client'
+
+import { AnimatePresence, motion } from 'framer-motion'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import React, { useRef } from 'react'
+import { useOnClickOutside } from 'usehooks-ts'
+
+import { cn } from '@/lib/utils'
+
 import {
   ArrowFatLinesLeft,
-  Logo,
-  ShortLogo,
   ArrowsDownUp,
   ChartDonut,
   House,
   Jar,
+  Logo,
   Receipt,
-} from "./ui/icons";
-import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+  ShortLogo,
+} from './ui/icons'
 
 const NAV_LINKS = [
   {
     id: 0,
-    name: "Overview",
+    name: 'Overview',
     icon: <House />,
-    link: "/",
+    link: '/',
   },
   {
     id: 1,
-    name: "Transactions",
+    name: 'Transactions',
     icon: <ArrowsDownUp />,
-    link: "/transactions",
+    link: '/transactions',
   },
   {
     id: 2,
-    name: "Budgets",
+    name: 'Budgets',
     icon: <ChartDonut />,
-    link: "/budgets",
+    link: '/budgets',
   },
   {
     id: 3,
-    name: "Pots",
+    name: 'Pots',
     icon: <Jar />,
-    link: "/pots",
+    link: '/pots',
   },
   {
     id: 4,
-    name: "Recurring bills",
+    name: 'Recurring bills',
     icon: <Receipt />,
-    link: "/recurring-bills",
+    link: '/recurring-bills',
   },
-] as const;
-type NavLinkType = (typeof NAV_LINKS)[number];
+] as const
+type NavLinkType = (typeof NAV_LINKS)[number]
 
 export default function SideBar() {
-  const [isActive, setActive] = React.useState<boolean>(false);
-  const ref = useRef(null);
+  const [isActive, setActive] = React.useState<boolean>(false)
+  const ref = useRef(null)
 
   useOnClickOutside(ref, () => {
-    if (isActive) setActive(false);
-  });
+    if (isActive) setActive(false)
+  })
 
-  const toggle = () => setActive(!isActive);
+  const toggle = () => setActive(!isActive)
   return (
     <motion.div
       ref={ref}
       initial={{
-        width: "88px",
+        width: '88px',
       }}
       animate={{
-        width: isActive ? "300px" : "88px",
+        width: isActive ? '300px' : '88px',
       }}
       transition={{ duration: 0.3 }}
-      className="h-screen bg-grey-900 rounded-r-lg text-grey-300  flex-col gap-6 hidden lg:flex"
+      className="hidden h-screen flex-col gap-6 rounded-r-lg bg-grey-900 text-grey-300 lg:flex"
     >
       {/* LOGO */}
-      <div className="py-10 px-8 flex justify-start items-center h-[101px]">
+      <div className="flex h-[101px] items-center justify-start px-8 py-10">
         <AnimatePresence mode="wait">
           {isActive ? (
             <motion.div
@@ -103,7 +106,7 @@ export default function SideBar() {
       </div>
 
       {/* MENU */}
-      <nav className="flex-grow   w-full">
+      <nav className="w-full flex-grow">
         <ul className="flex flex-col gap-1 pr-6">
           {NAV_LINKS.map((link) => (
             <NavLink key={link.id} link={link} isActive={isActive} />
@@ -114,10 +117,10 @@ export default function SideBar() {
       {/* TOGGLE */}
       <motion.button
         onClick={toggle}
-        className="mt-auto px-8 py-4 gap-2 flex items-center group mb-6"
+        className="group mb-6 mt-auto flex items-center gap-2 px-8 py-4"
       >
         <motion.div
-          className="w-fit h-fit group-hover:text-white"
+          className="h-fit w-fit group-hover:text-white"
           animate={{
             rotate: isActive ? 0 : 180,
           }}
@@ -129,30 +132,32 @@ export default function SideBar() {
           initial={{ opacity: 0 }}
           animate={{ opacity: isActive ? 1 : 0 }}
           transition={{ duration: 0.3 }}
-          className="text-preset-3 font-bold text-grey-300 truncate group-hover:text-white"
+          className="text-preset-3 truncate font-bold text-grey-300 group-hover:text-white"
         >
           Minimize Menu
         </motion.p>
       </motion.button>
     </motion.div>
-  );
+  )
 }
 
 function NavLink({ link, isActive }: { link: NavLinkType; isActive: boolean }) {
-  const pathname = usePathname();
+  const pathname = usePathname()
+
+  const isLinkActive = pathname === link.link
 
   return (
     <Link
       href={link.link}
-      className={cn("flex gap-4 items-center px-8 py-4 group", {
-        "text-white border-l-4 border-secondary-green bg-white rounded-r-lg":
-          pathname === link.link && isActive,
-        "hover:text-white hover:bg-grey-800": pathname !== link.link,
+      className={cn('group flex items-center gap-4 px-8 py-4', {
+        'rounded-r-lg border-l-4 border-secondary-green bg-white text-white':
+          isLinkActive && isActive,
+        'hover:bg-grey-800 hover:text-white': !isLinkActive,
       })}
     >
       <span
-        className={cn("text-current", {
-          "text-secondary-green": pathname === link.link,
+        className={cn('text-current', {
+          'text-secondary-green': isLinkActive,
         })}
       >
         {link.icon}
@@ -161,14 +166,14 @@ function NavLink({ link, isActive }: { link: NavLinkType; isActive: boolean }) {
         initial={{ opacity: 0 }}
         animate={{ opacity: isActive ? 1 : 0 }}
         transition={{ duration: 0.3 }}
-        className={cn("text-preset-3 font-bold truncate", {
-          "group-hover:text-white": pathname !== link.link,
-          "text-grey-900": pathname === link.link,
-          "text-grey-300": pathname !== link.link,
+        className={cn('text-preset-3 truncate font-bold', {
+          'group-hover:text-white': !isLinkActive,
+          'text-grey-900': isLinkActive,
+          'text-grey-300': !isLinkActive,
         })}
       >
         {link.name}
       </motion.p>
     </Link>
-  );
+  )
 }

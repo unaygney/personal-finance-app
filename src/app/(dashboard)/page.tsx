@@ -1,47 +1,51 @@
-import { CaretRight, JarLight } from "@/components/ui/icons";
-import Link from "next/link";
-import React from "react";
-import Image from "next/image";
-import { getColorHexCode } from "@/lib/utils";
-import { redirect } from "next/navigation";
-import db from "@/lib/db";
-import { decrypt } from "@/lib/auth";
-import Chart from "./chart";
-import { Pot, Transaction } from "@prisma/client";
-import { format } from "date-fns";
-import LogoutButton from "@/components/logout-button";
-export default async function Dashboard() {
-  const userId = await decrypt();
+import { Pot, Transaction } from '@prisma/client'
+import { format } from 'date-fns'
+import Image from 'next/image'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import React from 'react'
 
-  if (!userId) redirect("/login");
+import { decrypt } from '@/lib/auth'
+import db from '@/lib/db'
+import { getColorHexCode } from '@/lib/utils'
+
+import LogoutButton from '@/components/logout-button'
+import { CaretRight, JarLight } from '@/components/ui/icons'
+
+import Chart from './chart'
+
+export default async function Dashboard() {
+  const userId = await decrypt()
+
+  if (!userId) redirect('/login')
 
   const budgets = await db.budget.findMany({
     where: {
       userId: userId,
     },
-  });
+  })
   const transactions = await db.transaction.findMany({
     where: {
       userId: userId,
     },
-  });
+  })
 
   const pots = await db.pot.findMany({
     where: {
       userId: userId,
     },
-  });
+  })
 
   const chartData = budgets.map((budget) => {
     const categoryTransactions = transactions.filter((transaction) => {
-      return transaction.Category === budget.category;
-    });
+      return transaction.Category === budget.category
+    })
 
     const totalSpent = categoryTransactions.reduce((acc, transaction) => {
-      return acc + transaction.amount;
-    }, 0);
+      return acc + transaction.amount
+    }, 0)
 
-    const latestTransactions = categoryTransactions.slice(0, 3);
+    const latestTransactions = categoryTransactions.slice(0, 3)
 
     return {
       id: budget.id,
@@ -51,8 +55,8 @@ export default async function Dashboard() {
       totalSpent: totalSpent,
       remaining: budget.amount - Math.abs(totalSpent),
       latestTransaction: latestTransactions,
-    };
-  });
+    }
+  })
   return (
     <div className="container mx-auto flex flex-col gap-8">
       <div className="flex items-center justify-between">
@@ -72,27 +76,28 @@ export default async function Dashboard() {
         <div className="mb-4 break-inside-avoid">
           <Budgets chartData={chartData} />
         </div>
+
         <div className="mb-4 break-inside-avoid">
           <RecurringBills transactions={transactions} />
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function Balance({ transactions }: { transactions: Transaction[] }) {
-  const expenses = transactions.filter((transaction) => transaction.amount < 0);
-  const income = transactions.filter((transaction) => transaction.amount > 0);
+  const expenses = transactions.filter((transaction) => transaction.amount < 0)
+  const income = transactions.filter((transaction) => transaction.amount > 0)
 
   const totalExpenses = expenses.reduce((acc, transaction) => {
-    return acc + Math.abs(transaction.amount);
-  }, 0);
+    return acc + Math.abs(transaction.amount)
+  }, 0)
 
   const totalIncome = income.reduce((acc, transaction) => {
-    return acc + Math.abs(transaction.amount);
-  }, 0);
+    return acc + Math.abs(transaction.amount)
+  }, 0)
 
-  const currentBalance = totalIncome - totalExpenses;
+  const currentBalance = totalIncome - totalExpenses
 
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-3 md:gap-6">
@@ -123,14 +128,14 @@ function Balance({ transactions }: { transactions: Transaction[] }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
 function Pots({ pots }: { pots: Pot[] }) {
-  let slicedPots = pots.slice(0, 4);
+  let slicedPots = pots.slice(0, 4)
   const totalSaved = pots.reduce((acc, curr) => {
-    return acc + curr.total;
-  }, 0);
+    return acc + curr.total
+  }, 0)
 
   return (
     <div className="w-full break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
@@ -138,7 +143,7 @@ function Pots({ pots }: { pots: Pot[] }) {
         <div className="flex items-center justify-between">
           <h3 className="text-preset-2 font-bold text-grey-900">Pots</h3>
           <Link
-            href={"/pots"}
+            href={'/pots'}
             className="inline-flex items-center gap-3 text-grey-500"
           >
             See Details
@@ -175,18 +180,18 @@ function Pots({ pots }: { pots: Pot[] }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 function Budgets({ chartData }: { chartData: any }) {
-  const slicedChartData = chartData.slice(0, 4);
+  const slicedChartData = chartData.slice(0, 4)
 
   return (
-    <div className="w-full break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
+    <div className="min-h-[358px] w-full break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <h3 className="text-preset-2 font-bold text-grey-900">Budgets</h3>
           <Link
-            href={"/budgets"}
+            href={'/budgets'}
             className="inline-flex items-center gap-3 text-grey-500"
           >
             See Details
@@ -194,8 +199,11 @@ function Budgets({ chartData }: { chartData: any }) {
           </Link>
         </div>
         <div className="flex flex-col gap-4 md:flex-row">
-          <Chart chartData={chartData} />
-
+          {chartData.length > 0 ? (
+            <Chart chartData={chartData} />
+          ) : (
+            <p className="text-preset-4 text-grey-300">No Data Provided.</p>
+          )}
           <div className="flex flex-col gap-4 lg:w-[98px]">
             {slicedChartData.map((item: any, index: any) => (
               <div
@@ -211,7 +219,7 @@ function Budgets({ chartData }: { chartData: any }) {
                   {item.category}
                 </h4>
                 <p className="text-preset-5 font-bold text-grey-900">
-                  ${Math.abs(item.totalSpent)?.toFixed(2) ?? "N/A"}
+                  ${Math.abs(item.totalSpent)?.toFixed(2) ?? 'N/A'}
                 </p>
               </div>
             ))}
@@ -219,103 +227,107 @@ function Budgets({ chartData }: { chartData: any }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 function Transactions({ transactions }: { transactions: Transaction[] }) {
-  let slicedTransactions = transactions.slice(0, 4);
+  let slicedTransactions = transactions.slice(0, 4)
   return (
-    <div className="break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
+    <div className="min-h-[200px] break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
           <h3 className="text-preset-2 font-bold text-grey-900">
             Transactions
           </h3>
           <Link
-            href={"/transactions"}
+            href={'/transactions'}
             className="inline-flex items-center gap-3 text-grey-500"
           >
             See Details
             <CaretRight />
           </Link>
         </div>
-        {slicedTransactions.map((transaction) => (
-          <div
-            key={transaction.id}
-            className="flex justify-between border-b border-grey-100 pb-5"
-          >
-            <div className="flex items-center gap-4">
-              <span className="relative h-10 w-10 overflow-hidden rounded-full">
-                <Image
-                  src={transaction.avatar}
-                  alt="transaction image"
-                  fill
-                  unoptimized
-                />
-              </span>
-              <h4 className="text-preset-4 font-bold capitalize text-grey-900">
-                {transaction.name}
-              </h4>
+        {transactions.length > 0 ? (
+          slicedTransactions.map((transaction) => (
+            <div
+              key={transaction.id}
+              className="flex justify-between border-b border-grey-100 pb-5"
+            >
+              <div className="flex items-center gap-4">
+                <span className="relative h-10 w-10 overflow-hidden rounded-full">
+                  <Image
+                    src={transaction.avatar}
+                    alt="transaction image"
+                    fill
+                    unoptimized
+                  />
+                </span>
+                <h4 className="text-preset-4 font-bold capitalize text-grey-900">
+                  {transaction.name}
+                </h4>
+              </div>
+              <div className="flex flex-col gap-2 text-right">
+                <p
+                  className="text-preset-4 font-bold"
+                  style={{
+                    color: transaction.amount < 0 ? '#201F24' : '#277C78',
+                  }}
+                >
+                  {transaction.amount < 0 ? '-' : '+'}$
+                  {Math.abs(transaction.amount).toFixed(2)}
+                </p>
+                <p className="text-preset-5 font-normal text-grey-500">
+                  {format(new Date(transaction.date), 'dd MMM yyyy')}
+                </p>
+              </div>
             </div>
-            <div className="flex flex-col gap-2 text-right">
-              <p
-                className="text-preset-4 font-bold"
-                style={{
-                  color: transaction.amount < 0 ? "#201F24" : "#277C78",
-                }}
-              >
-                {transaction.amount < 0 ? "-" : "+"}$
-                {Math.abs(transaction.amount).toFixed(2)}
-              </p>
-              <p className="text-preset-5 font-normal text-grey-500">
-                {format(new Date(transaction.date), "dd MMM yyyy")}
-              </p>
-            </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="text-preset-4 text-grey-300">No Data Provided</p>
+        )}
       </div>
     </div>
-  );
+  )
 }
 function RecurringBills({ transactions }: { transactions: Transaction[] }) {
   const recurringData = transactions.filter(
-    (transaction) => transaction.recurring && transaction.amount < 0,
-  );
+    (transaction) => transaction.recurring && transaction.amount < 0
+  )
 
   const paidBills = recurringData.filter(
-    (transaction) => new Date(transaction.date) < new Date(),
-  );
+    (transaction) => new Date(transaction.date) < new Date()
+  )
 
   const upcomingBills = recurringData.filter(
-    (transaction) => new Date(transaction.date) >= new Date(),
-  );
+    (transaction) => new Date(transaction.date) >= new Date()
+  )
 
   const dueSoonBills = recurringData.filter((transaction) => {
-    const today = new Date();
-    const dueDate = new Date(transaction.date);
+    const today = new Date()
+    const dueDate = new Date(transaction.date)
     const diffInDays =
-      (dueDate.getTime() - today.getTime()) / (1000 * 3600 * 24);
-    return diffInDays <= 3 && diffInDays >= 0;
-  });
+      (dueDate.getTime() - today.getTime()) / (1000 * 3600 * 24)
+    return diffInDays <= 3 && diffInDays >= 0
+  })
 
   const totalBillsAmount = recurringData.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+    0
+  )
 
   const paidBillsTotal = paidBills.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+    0
+  )
 
   const upcomingBillsTotal = upcomingBills.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+    0
+  )
 
   const dueSoonTotal = dueSoonBills.reduce(
     (acc, transaction) => acc + Math.abs(transaction.amount),
-    0,
-  );
+    0
+  )
 
   return (
     <div className="break-inside-avoid rounded-lg bg-white px-5 py-6 md:p-8">
@@ -325,7 +337,7 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
             Recurring Bills
           </h3>
           <Link
-            href={"/recurring-bills"}
+            href={'/recurring-bills'}
             className="inline-flex items-center gap-3 text-grey-500"
           >
             See Details
@@ -336,8 +348,8 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
           <div
             className="relative w-full rounded-[8px] bg-beige-100 px-4 py-5"
             style={{
-              borderLeftWidth: "4px",
-              borderColor: "#277C78",
+              borderLeftWidth: '4px',
+              borderColor: '#277C78',
             }}
           >
             <div className="flex items-center justify-between">
@@ -352,8 +364,8 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
           <div
             className="relative w-full rounded-[8px] bg-beige-100 px-4 py-5"
             style={{
-              borderLeftWidth: "4px",
-              borderColor: "#F2CDAC",
+              borderLeftWidth: '4px',
+              borderColor: '#F2CDAC',
             }}
           >
             <div className="flex items-center justify-between">
@@ -370,8 +382,8 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
           <div
             className="relative w-full rounded-[8px] bg-beige-100 px-4 py-5"
             style={{
-              borderLeftWidth: "4px",
-              borderColor: "#82C9D7",
+              borderLeftWidth: '4px',
+              borderColor: '#82C9D7',
             }}
           >
             <div className="flex items-center justify-between">
@@ -384,5 +396,5 @@ function RecurringBills({ transactions }: { transactions: Transaction[] }) {
         </div>
       </div>
     </div>
-  );
+  )
 }

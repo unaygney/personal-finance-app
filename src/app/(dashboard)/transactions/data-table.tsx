@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   ColumnDef,
@@ -10,12 +10,31 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
+} from '@tanstack/react-table'
+import React from 'react'
+import { useScreen } from 'usehooks-ts'
+
+import { Button } from '@/components/ui/button'
+import { CaretRight, Filter, Sort } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+} from '@/components/ui/pagination'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from '@/components/ui/popover'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   Table,
   TableBody,
@@ -23,29 +42,11 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-} from "@/components/ui/pagination";
-import React from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { CaretRight, Filter, Sort } from "@/components/ui/icons";
-import { useScreen } from "usehooks-ts";
+} from '@/components/ui/table'
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
 }
 
 export function DataTable<TData, TValue>({
@@ -53,11 +54,11 @@ export function DataTable<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const { width } = useScreen();
-  const visiblePageCount = width <= 640 ? 3 : 5;
+    []
+  )
+  const [sorting, setSorting] = React.useState<SortingState>([])
+  const { width } = useScreen()
+  const visiblePageCount = width <= 640 ? 3 : 5
 
   const table = useReactTable({
     data,
@@ -72,7 +73,7 @@ export function DataTable<TData, TValue>({
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
-  });
+  })
 
   return (
     <div className="mb-10 h-full w-full">
@@ -80,9 +81,9 @@ export function DataTable<TData, TValue>({
         <div className="flex items-center py-6">
           <Input
             placeholder="Search transaction"
-            value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+            value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
             onChange={(event) =>
-              table.getColumn("name")?.setFilterValue(event.target.value)
+              table.getColumn('name')?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
@@ -99,19 +100,19 @@ export function DataTable<TData, TValue>({
               <Select
                 name="primary-sort-select"
                 onValueChange={(value) => {
-                  let desc = false;
-                  if (value === "latest") {
-                    setSorting([{ id: "date", desc: true }]);
-                  } else if (value === "oldest") {
-                    setSorting([{ id: "date", desc: false }]);
-                  } else if (value === "atoz") {
-                    setSorting([{ id: "name", desc: false }]);
-                  } else if (value === "ztoa") {
-                    setSorting([{ id: "name", desc: true }]);
-                  } else if (value === "highest") {
-                    setSorting([{ id: "amount", desc: true }]);
-                  } else if (value === "lowers") {
-                    setSorting([{ id: "amount", desc: false }]);
+                  let desc = false
+                  if (value === 'latest') {
+                    setSorting([{ id: 'date', desc: true }])
+                  } else if (value === 'oldest') {
+                    setSorting([{ id: 'date', desc: false }])
+                  } else if (value === 'atoz') {
+                    setSorting([{ id: 'name', desc: false }])
+                  } else if (value === 'ztoa') {
+                    setSorting([{ id: 'name', desc: true }])
+                  } else if (value === 'highest') {
+                    setSorting([{ id: 'amount', desc: true }])
+                  } else if (value === 'lowers') {
+                    setSorting([{ id: 'amount', desc: false }])
                   }
                 }}
               >
@@ -138,10 +139,10 @@ export function DataTable<TData, TValue>({
               <Select
                 name="secondary-sort-select"
                 onValueChange={(value) => {
-                  if (value === "all") {
-                    setColumnFilters([]);
+                  if (value === 'all') {
+                    setColumnFilters([])
                   } else {
-                    setColumnFilters([{ id: "Category", value }]);
+                    setColumnFilters([{ id: 'Category', value }])
                   }
                 }}
               >
@@ -167,7 +168,7 @@ export function DataTable<TData, TValue>({
               </PopoverTrigger>
               <PopoverContent align="end" className="w-32 p-2">
                 <Button
-                  onClick={() => setSorting([{ id: "date", desc: true }])}
+                  onClick={() => setSorting([{ id: 'date', desc: true }])}
                   variant="tertiary"
                   className="w-full"
                   size="sm"
@@ -179,7 +180,7 @@ export function DataTable<TData, TValue>({
                   variant="tertiary"
                   className="w-full"
                   size="sm"
-                  onClick={() => setSorting([{ id: "date", desc: false }])}
+                  onClick={() => setSorting([{ id: 'date', desc: false }])}
                 >
                   Oldest
                 </Button>
@@ -188,7 +189,7 @@ export function DataTable<TData, TValue>({
                   variant="tertiary"
                   className="w-full"
                   size="sm"
-                  onClick={() => setSorting([{ id: "name", desc: false }])}
+                  onClick={() => setSorting([{ id: 'name', desc: false }])}
                 >
                   A to Z
                 </Button>
@@ -197,7 +198,7 @@ export function DataTable<TData, TValue>({
                   variant="tertiary"
                   className="w-full"
                   size="sm"
-                  onClick={() => setSorting([{ id: "name", desc: true }])}
+                  onClick={() => setSorting([{ id: 'name', desc: true }])}
                 >
                   Z to A
                 </Button>
@@ -206,7 +207,7 @@ export function DataTable<TData, TValue>({
                   variant="tertiary"
                   className="w-full"
                   size="sm"
-                  onClick={() => setSorting([{ id: "amount", desc: true }])}
+                  onClick={() => setSorting([{ id: 'amount', desc: true }])}
                 >
                   Highest
                 </Button>
@@ -215,7 +216,7 @@ export function DataTable<TData, TValue>({
                   variant="tertiary"
                   className="w-full"
                   size="sm"
-                  onClick={() => setSorting([{ id: "amount", desc: false }])}
+                  onClick={() => setSorting([{ id: 'amount', desc: false }])}
                 >
                   Lowers
                 </Button>
@@ -238,7 +239,7 @@ export function DataTable<TData, TValue>({
                 <Button
                   onClick={() =>
                     setColumnFilters([
-                      { id: "category", value: "Entertainment" },
+                      { id: 'Category', value: 'Entertainment' },
                     ])
                   }
                   variant="tertiary"
@@ -250,7 +251,7 @@ export function DataTable<TData, TValue>({
                 <hr />
                 <Button
                   onClick={() =>
-                    setColumnFilters([{ id: "category", value: "Bill" }])
+                    setColumnFilters([{ id: 'Category', value: 'Bill' }])
                   }
                   variant="tertiary"
                   className="w-full justify-start"
@@ -261,7 +262,7 @@ export function DataTable<TData, TValue>({
                 <hr />
                 <Button
                   onClick={() =>
-                    setColumnFilters([{ id: "category", value: "Groceries" }])
+                    setColumnFilters([{ id: 'Category', value: 'Groceries' }])
                   }
                   variant="tertiary"
                   className="w-full justify-start"
@@ -272,7 +273,7 @@ export function DataTable<TData, TValue>({
                 <hr />
                 <Button
                   onClick={() =>
-                    setColumnFilters([{ id: "category", value: "Dining Out" }])
+                    setColumnFilters([{ id: 'Category', value: 'Dining Out' }])
                   }
                   variant="tertiary"
                   className="w-full justify-start"
@@ -284,7 +285,7 @@ export function DataTable<TData, TValue>({
                 <Button
                   onClick={() =>
                     setColumnFilters([
-                      { id: "category", value: "Transportation" },
+                      { id: 'Category', value: 'Transportation' },
                     ])
                   }
                   variant="tertiary"
@@ -309,10 +310,10 @@ export function DataTable<TData, TValue>({
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext(),
+                            header.getContext()
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -322,13 +323,13 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                  data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </TableCell>
                   ))}
@@ -369,8 +370,8 @@ export function DataTable<TData, TValue>({
                       <Button
                         variant={
                           table.getState().pagination.pageIndex === index
-                            ? "default"
-                            : "secondary"
+                            ? 'default'
+                            : 'secondary'
                         }
                         size="sm"
                         onClick={() => table.setPageIndex(index)}
@@ -378,7 +379,7 @@ export function DataTable<TData, TValue>({
                         {index + 1}
                       </Button>
                     </PaginationItem>
-                  ),
+                  )
                 )}
                 {table.getPageCount() > visiblePageCount && (
                   <PaginationEllipsis />
@@ -399,5 +400,5 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </div>
-  );
+  )
 }

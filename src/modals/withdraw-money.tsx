@@ -1,61 +1,66 @@
-"use client";
+'use client'
 
-import React from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Pot } from '@prisma/client'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
-import { Button } from "@/components/ui/button";
+import { getColorHexCode } from '@/lib/utils'
+import { WithdrawFormSchema, withdrawSchema } from '@/lib/validations'
+
+import { Button } from '@/components/ui/button'
 import {
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Form,
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { getColorHexCode } from "@/lib/utils";
-import { Pot } from "@prisma/client";
-import { WithdrawFormSchema, withdrawSchema } from "@/lib/validations";
-import { withdrawMoney } from "@/app/(dashboard)/pots/actions";
-import { useToast } from "@/hooks/use-toast";
+} from '@/components/ui/form'
+import { Input } from '@/components/ui/input'
+import { Progress } from '@/components/ui/progress'
+
+import { withdrawMoney } from '@/app/(dashboard)/pots/actions'
+
+import { useToast } from '@/hooks/use-toast'
 
 export default function WithdrawMoney({ pot }: { pot: Pot }) {
-  const { toast } = useToast();
-  const maxAmount = pot.total;
+  const { toast } = useToast()
+  const maxAmount = pot.total
 
   const form = useForm<WithdrawFormSchema>({
     resolver: zodResolver(withdrawSchema(maxAmount)),
     defaultValues: { amount: 0 },
-  });
+  })
 
   async function onSubmit(values: WithdrawFormSchema) {
-    const res = await withdrawMoney(pot.id, values.amount);
+    const res = await withdrawMoney(pot.id, values.amount)
 
     if (res.success) {
       toast({
-        title: "Withdrawal Successful",
-        description: "You have successfully withdrawn money from your pot",
-      });
-      setTimeout(() => window.location.reload(), 2000);
+        title: 'Withdrawal Successful',
+        description: 'You have successfully withdrawn money from your pot',
+      })
+      form.reset({ amount: 0 })
+      setTimeout(() => window.location.reload(), 2000)
     } else {
       toast({
-        title: "Error",
-        description: "An error occurred while processing your request",
-        variant: "destructive",
-      });
+        title: 'Error',
+        description: 'An error occurred while processing your request',
+        variant: 'destructive',
+      })
+      form.reset({ amount: 0 })
     }
   }
 
-  const amount = form.watch("amount");
+  const amount = form.watch('amount')
 
   return (
     <DialogContent>
@@ -108,18 +113,18 @@ export default function WithdrawMoney({ pot }: { pot: Pot }) {
                             min={1}
                             max={maxAmount}
                             onChange={(e) => {
-                              let value = e.target.value;
-                              if (value === "") {
-                                field.onChange(value);
-                                return;
+                              let value = e.target.value
+                              if (value === '') {
+                                field.onChange(value)
+                                return
                               }
 
-                              let numericValue = parseFloat(value);
+                              let numericValue = parseFloat(value)
                               if (numericValue > maxAmount) {
-                                numericValue = maxAmount;
+                                numericValue = maxAmount
                               }
                               if (!isNaN(numericValue)) {
-                                field.onChange(numericValue);
+                                field.onChange(numericValue)
                               }
                             }}
                           />
@@ -139,5 +144,5 @@ export default function WithdrawMoney({ pot }: { pot: Pot }) {
         </DialogDescription>
       </DialogHeader>
     </DialogContent>
-  );
+  )
 }

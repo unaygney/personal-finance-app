@@ -78,7 +78,13 @@ export default async function BudgetsPage() {
         </Dialog>
       </div>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-[minmax(0,428px)_1fr]">
-        {chartData.length > 0 ? <ChartSection chartData={chartData} /> : null}
+        {chartData.length > 0 ? (
+          <ChartSection chartData={chartData} />
+        ) : (
+          <div className="text-preset-4 text-grey-300">
+            You haven&apos;t created a budget yet.
+          </div>
+        )}
         <div className="flex flex-col gap-6">
           {chartData.map((data) => (
             <ContentSection key={data.category} data={data} />
@@ -210,7 +216,7 @@ function ContentSection({ data }: { data: any }) {
 
                       <div className="flex flex-col justify-between text-right">
                         <p className="text-preset-5 font-bold text-grey-900">
-                          {`-$${transaction.amount}`}
+                          {`-$${Math.abs(transaction.amount).toFixed(2)}`}
                         </p>
                         <p className="text-preset-5 text-grey-500">
                           {new Date(transaction.date).toLocaleDateString()}
