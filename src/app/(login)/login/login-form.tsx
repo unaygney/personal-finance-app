@@ -1,9 +1,15 @@
-"use client";
-import React from "react";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { LoginFormSchema, loginSchema } from "@/lib/validations";
-import { Button } from "@/components/ui/button";
+'use client'
+
+import { login } from '../actions'
+import { zodResolver } from '@hookform/resolvers/zod'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import React from 'react'
+import { useForm } from 'react-hook-form'
+
+import { LoginFormSchema, loginSchema } from '@/lib/validations'
+
+import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
@@ -11,63 +17,62 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { Eye } from "@/components/ui/icons";
-import { login } from "../actions";
-import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/form'
+import { Eye } from '@/components/ui/icons'
+import { Input } from '@/components/ui/input'
+
+import { useToast } from '@/hooks/use-toast'
+
 export default function LoginForm() {
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const router = useRouter();
-  const { toast } = useToast();
+  const [showPassword, setShowPassword] = React.useState<boolean>(false)
+  const router = useRouter()
+  const { toast } = useToast()
 
   const togglePassword = () => {
-    setShowPassword((prev) => !prev);
-  };
+    setShowPassword((prev) => !prev)
+  }
 
   const form = useForm<LoginFormSchema>({
     resolver: zodResolver(loginSchema),
-  });
+  })
 
   const {
     formState: { isSubmitting },
     reset,
-  } = form;
+  } = form
 
   async function onSubmit(values: LoginFormSchema) {
-    const res = await login(values.email, values.password);
+    const res = await login(values.email, values.password)
 
     if (res.success) {
       toast({
-        title: "Account created",
+        title: 'Login Success',
         description: res.message,
-      });
+      })
       reset({
-        email: "",
-        password: "",
-      });
-      router.push("/login");
+        email: '',
+        password: '',
+      })
+      router.push('/login')
     } else {
       toast({
-        title: "Error",
+        title: 'Error',
         description: res.message,
-        variant: "destructive",
-      });
+        variant: 'destructive',
+      })
       reset({
-        email: "",
-        password: "",
-      });
+        email: '',
+        password: '',
+      })
     }
   }
 
   return (
-    <div className="flex flex-col items-center gap-8 ">
+    <div className="flex flex-col items-center gap-8">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-8 w-full"
+          className="w-full space-y-8"
         >
           <FormField
             control={form.control}
@@ -91,14 +96,14 @@ export default function LoginForm() {
                 <FormControl className="">
                   <div className="relative">
                     <Input
-                      type={showPassword ? "text" : "password"}
+                      type={showPassword ? 'text' : 'password'}
                       placeholder="Password"
                       {...field}
                     />
                     <button
                       onClick={togglePassword}
                       type="button"
-                      className="absolute top-1/2 -translate-y-1/2 right-3"
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
                     >
                       <Eye />
                     </button>
@@ -119,12 +124,12 @@ export default function LoginForm() {
         </form>
       </Form>
       <Link
-        className="text-preset-4 text-center truncate  font-normal inline-flex gap-2 items-center text-grey-500"
+        className="text-preset-4 inline-flex items-center gap-2 truncate text-center font-normal text-grey-500"
         href="/sign-up"
       >
         Need to create an account?
-        <span className="underline font-bold text-grey-900">Sign Up</span>
+        <span className="font-bold text-grey-900 underline">Sign Up</span>
       </Link>
     </div>
-  );
+  )
 }
