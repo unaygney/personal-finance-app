@@ -139,7 +139,7 @@ export default function AddnewTransaction() {
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Transaction Date</FormLabel>
-                        <Popover>
+                        <Popover modal={true}>
                           <PopoverTrigger asChild>
                             <FormControl>
                               <Button
@@ -158,11 +158,7 @@ export default function AddnewTransaction() {
                               </Button>
                             </FormControl>
                           </PopoverTrigger>
-                          <PopoverContent
-                            style={{ pointerEvents: 'auto' }}
-                            className="w-auto p-0"
-                            align="start"
-                          >
+                          <PopoverContent className="w-auto p-0" align="start">
                             <Calendar
                               mode="single"
                               selected={
