@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Personal Finance App 🚀
 
-## Getting Started
+Personal Finance App is a modern web application developed as part of a
+challenge on Frontend Mentor. The app provides an intuitive platform for users
+to manage their budgets by categorizing expenses as negative and incomes as
+positive values, ensuring a clear and efficient financial overview.
 
-First, run the development server:
+## Key Features 🌟
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Expense and Income Management**: Record expenses as negative values and
+  incomes as positive values for easy budget tracking.
+- **User-Friendly Interface**: Designed to provide a seamless user experience
+  with an intuitive and responsive UI.
+- **Secure and Scalable**: Built with performance and security in mind, ensuring
+  user data is safe.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Authentication and Security 🔐
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Access and Refresh Token Management**: The application uses JWTs (JSON Web
+  Tokens) for managing user sessions securely.
+  - **Access Tokens**: These are short-lived tokens that are valid for **15
+    minutes**. After expiration, a new access token is generated using the
+    refresh token.
+  - **Refresh Tokens**: These are securely stored in **Redis**, a fast,
+    in-memory data store, to enhance security and performance. Refresh tokens
+    allow users to stay logged in without needing to re-authenticate frequently.
+- **Token Renewal**: Access tokens are automatically renewed every **15
+  minutes** using refresh tokens, ensuring a balance between security and
+  usability.
+- This setup ensures a balance between user experience (staying logged in) and
+  security (short-lived access tokens).
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Technologies Used 🛠️
 
-## Learn More
+- **Next.js**: A React framework for production.
+- **TypeScript**: Strongly typed programming language for JavaScript.
+- **Prisma**: Next-generation ORM for database management.
+- **PostgreSQL**: Reliable and robust database solution.
+- **React Query**: Data-fetching library for managing server state.
+- **Framer Motion**: For smooth animations and transitions.
+- **shadcn/ui**: For a modern, stylish UI component library.
+- **Redis**: Used for storing refresh tokens securely and managing session
+  state.
 
-To learn more about Next.js, take a look at the following resources:
+## Demo Login Credentials
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+To see a demo with pre-filled data, you can log in with the following
+credentials:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Email**: `test@finance.com`
+- **Password**: `Test1234`
 
-## Deploy on Vercel
+## License 📄
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is licensed under the MIT License.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Acknowledgements 🙏
+
+This project was developed based on a challenge from
+[Frontend Mentor](https://www.frontendmentor.io/), utilizing the provided
+professional Figma design.
+
+---
