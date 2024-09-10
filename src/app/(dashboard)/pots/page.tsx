@@ -37,6 +37,7 @@ export default async function PotsPage() {
 
   const POTS = await db.pot.findMany({
     where: { userId: userId },
+    orderBy: { name: 'asc' },
   })
 
   return (
